@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx nuxt build",
-    "dev": "npx nuxt dev",
-    "generate": "npx nuxt generate"
+    "build": "npx nuxi build",
+    "dev": "npx nuxi dev",
+    "generate": "npx nuxi generate"
   },
   "dependencies": {
     "nuxt": "^3.17.0",
