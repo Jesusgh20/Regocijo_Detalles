@@ -292,7 +292,7 @@ const tamanoActual = computed<Tamano | undefined>(() =>
 const dedicatoria = ref('')
 
 // WhatsApp
-const WHATSAPP_NUMBER = '573112345678'
+const WHATSAPP_NUMBER = '573127506785'
 
 const whatsappUrl = computed(() => {
   if (!ramo.value || !tamanoActual.value) return '#'

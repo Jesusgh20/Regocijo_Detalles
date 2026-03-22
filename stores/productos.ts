@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'   // ← esta línea faltaba
 
 // ──────────────────────────────────────────
 //  Types
@@ -7,7 +8,7 @@ export interface Tamano {
   value: string
   label: string
   flores: string
-  precio: number          // precio específico por tamaño
+  precio: number
 }
 
 export interface Ramo {
@@ -16,7 +17,7 @@ export interface Ramo {
   descripcion: string
   precio: number
   imagen_url: string
-  imagenes: string[]       // carrusel con 3 imágenes distintas del ramo
+  imagenes: string[]
   categoria: 'Rosa' | 'Blanco' | 'Mixto' | 'Especial' | string
   disponible: boolean
   destacado?: boolean
@@ -123,15 +124,18 @@ export const useProductosStore = defineStore('productos', () => {
 
   const totalCarrito = computed(() =>
     carritoItems.value.reduce(
-      (acc, item) => acc + item.tamano.precio * item.cantidad,
+      (acc: number, item) => acc + item.tamano.precio * item.cantidad,  // ← tipo en acc
       0,
     ),
   )
 
   const cantidadCarrito = computed(() =>
-    carritoItems.value.reduce((acc, item) => acc + item.cantidad, 0),
+    carritoItems.value.reduce(
+      (acc: number, item) => acc + item.cantidad,   // ← tipo en acc
+      0,
+    ),
   )
-
+  
   // ── Actions ────────────────────────────
   function agregarAlCarrito(ramo: Ramo, tamano?: Tamano) {
     // Si no se pasa tamaño, usa el mediano por defecto

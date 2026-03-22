@@ -8,7 +8,7 @@
 
           <!-- Logo -->
           <NuxtLink to="/" class="flex items-center gap-3 group">
-            <img src="/Logo.png" style="height:44px;width:44px;object-fit:contain;border-radius:50%;" />
+            <img src="/regocijo.png" style="height:44px;width:44px;object-fit:contain;border-radius:50%;" />
             <div>
               <p class="font-display text-xl leading-none text-stone-800 group-hover:text-petal-600 transition-colors">
                 Regocijo
@@ -61,13 +61,51 @@
               </span>
             </button>
 
-            <!-- CTA mobile -->
-            <NuxtLink to="/catalogo" class="md:hidden btn-primary text-xs px-4 py-2">
-              Catalogo
-            </NuxtLink>
+            <!-- Botón hamburguesa (solo móvil) -->
+            <button
+              class="md:hidden p-2 rounded-full hover:bg-petal-50 text-stone-500 hover:text-petal-600 transition-colors"
+              aria-label="Abrir menú"
+              @click="menuAbierto = !menuAbierto"
+            >
+              <!-- Icono hamburguesa / X -->
+              <svg v-if="!menuAbierto" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Menú móvil desplegable -->
+      <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        enter-from-class="opacity-0 -translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-200 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-2"
+      >
+        <nav
+          v-if="menuAbierto"
+          class="md:hidden border-t border-petal-100 bg-ivory/95 backdrop-blur-md"
+        >
+          <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
+            <NuxtLink
+              v-for="link in navLinks"
+              :key="link.to"
+              :to="link.to"
+              class="font-body text-sm text-stone-600 hover:text-petal-600 hover:bg-petal-50 transition-colors tracking-wide px-4 py-3 rounded-xl"
+              active-class="text-petal-600 font-medium bg-petal-50"
+              @click="menuAbierto = false"
+            >
+              {{ link.label }}
+            </NuxtLink>
+          </div>
+        </nav>
+      </Transition>
     </header>
 
     <!-- ── Main content ──────────────────────────── -->
@@ -83,7 +121,7 @@
           <!-- Brand -->
           <div class="md:col-span-2">
             <div class="flex items-center gap-3 mb-4">
-              <img src="/Logo.png" style="height:48px;width:48px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.08);" />
+              <img src="/regocijo.png" style="height:48px;width:48px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.08);" />
               <div>
                 <p class="font-display text-2xl text-white leading-none">Regocijo</p>
                 <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-300 mt-0.5">Detalles</p>
@@ -162,9 +200,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useProductosStore } from '~/stores/productos'
 
 const productosStore = useProductosStore()
+const menuAbierto = ref(false)
 
 const navLinks = [
   { to: '/', label: 'Inicio' },

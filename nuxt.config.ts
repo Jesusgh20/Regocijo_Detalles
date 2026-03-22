@@ -29,7 +29,7 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: 'icon', type: 'image/png', href: '/Logo.png' },
+        { rel: 'icon', type: 'image/png', href: '/regocijosinfondo.png' },
         {
           rel: 'preconnect',
           href: 'https://fonts.googleapis.com',
