@@ -14,7 +14,7 @@
                 Regocijo
               </p>
               <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-400 leading-none mt-0.5">
-                Detalles
+                Floristería
               </p>
             </div>
           </NuxtLink>
@@ -48,17 +48,21 @@
             <button
               class="relative p-2 rounded-full hover:bg-petal-50 text-stone-500 hover:text-petal-600 transition-colors"
               aria-label="Ver carrito"
+              @click="carritoAbierto = true"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
               </svg>
-              <span
-                v-if="productosStore.cantidadCarrito > 0"
-                class="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center
-                       bg-petal-500 text-white text-[10px] font-medium rounded-full"
-              >
-                {{ productosStore.cantidadCarrito }}
-              </span>
+              <Transition name="badge-pop">
+                <span
+                  v-if="productosStore.cantidadCarrito > 0"
+                  :key="productosStore.cantidadCarrito"
+                  class="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center
+                         bg-petal-500 text-white text-[10px] font-medium rounded-full"
+                >
+                  {{ productosStore.cantidadCarrito }}
+                </span>
+              </Transition>
             </button>
 
             <!-- Botón hamburguesa (solo móvil) -->
@@ -124,7 +128,7 @@
               <img src="/regocijo.png" style="height:48px;width:48px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.08);" />
               <div>
                 <p class="font-display text-2xl text-white leading-none">Regocijo</p>
-                <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-300 mt-0.5">Detalles</p>
+                <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-300 mt-0.5">Floristería</p>
               </div>
             </div>
             <p class="font-body text-sm text-stone-400 leading-relaxed max-w-xs">
@@ -172,7 +176,7 @@
               </li>
               <li class="flex items-center gap-2 text-sm text-stone-400">
                 <span aria-hidden="true">✉️</span>
-                <span>hola@regocijodetalles.co</span>
+                <span>hola@regocijofloristeria.co</span>
               </li>
               <li class="flex items-center gap-2 text-sm text-stone-400">
                 <span aria-hidden="true">🕐</span>
@@ -186,37 +190,61 @@
         <!-- Bottom bar -->
         <div class="mt-16 pt-8 border-t border-stone-700 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p class="font-body text-xs text-stone-500">
-            © {{ new Date().getFullYear() }} Regocijo Detalles · Hecho con 🌺 en Colombia
+            © {{ new Date().getFullYear() }} Regocijo Floristería · Hecho con 🌺 en Colombia
           </p>
           <div class="flex gap-6">
-            <a href="#" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors">Privacidad</a>
-            <a href="#" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors">Términos</a>
+            <button @click="openPolicy('privacy')" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors" style="background:none;border:none;cursor:pointer;padding:0;">Privacidad</button>
+            <button @click="openPolicy('terms')" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors" style="background:none;border:none;cursor:pointer;padding:0;">Términos</button>
           </div>
         </div>
       </div>
     </footer>
 
   </div>
+  <CarritoDrawer v-model="carritoAbierto" @open-policy="openPolicy" />
+  <PolicyModal v-model="policyOpen" :initial-tab="policyTab" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useProductosStore } from '~/stores/productos'
+import PolicyModal from '~/components/PolicyModal.vue'
+import CarritoDrawer from '~/components/CarritoDrawer.vue'
 
 const productosStore = useProductosStore()
 const menuAbierto = ref(false)
+const carritoAbierto = useState('carritoAbierto', () => false)
+const policyOpen = ref(false)
+const policyTab = ref<'terms' | 'privacy'>('terms')
+function openPolicy(tab: 'terms' | 'privacy') {
+  policyTab.value = tab
+  policyOpen.value = true
+}
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
-  { to: '/catalogo', label: 'Catalogo' },
+  { to: '/catalogo', label: 'Catálogo' },
+  { to: '/editar-ramo', label: 'Edita tu Ramo' },
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/contacto', label: 'Contacto' },
 ]
 
 const footerShopLinks = [
   { to: '/catalogo', label: 'Todos los ramos' },
-  { to: '/catalogo?categoria=Rosa', label: 'Rosas' },
-  { to: '/catalogo?categoria=Especial', label: 'Ediciones especiales' },
-  { to: '/catalogo?categoria=Blanco', label: 'Ramos blancos' },
+  { to: '/catalogo?categoria=rosas', label: 'Rosas' },
+  { to: '/catalogo?categoria=girasoles', label: 'Girasoles' },
+  { to: '/catalogo?categoria=lirios', label: 'Lirios' },
+  { to: '/catalogo?categoria=mixtos', label: 'Mixtos' },
 ]
 </script>
+
+<style>
+/* Badge pop animation for cart count */
+.badge-pop-enter-active { animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.badge-pop-leave-active { transition: opacity 0.15s ease; }
+.badge-pop-leave-to { opacity: 0; }
+@keyframes badge-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+</style>

@@ -5,6 +5,7 @@
          HERO
     ══════════════════════════════════════ -->
     <section class="nosotros-hero">
+      <client-only><PetalCanvas /></client-only>
       <div class="absolute inset-0 pointer-events-none">
         <div style="position:absolute;top:-60px;right:-40px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,197,213,0.35) 0%,transparent 70%);"></div>
         <div style="position:absolute;bottom:-40px;left:8%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(205,220,188,0.3) 0%,transparent 70%);"></div>
@@ -16,7 +17,7 @@
           <em class="text-gradient-floral">un sueño florido</em>
         </h1>
         <p class="nosotros-subtitle">
-          Regocijo Detalles nació del amor por las flores y la convicción de que cada momento merece ser celebrado con belleza.
+          Regocijo Floristería nació del amor por las flores y la convicción de que cada momento merece ser celebrado con belleza.
         </p>
       </div>
     </section>
@@ -34,14 +35,14 @@
             <!-- Reemplaza este src con tu foto real -->
             <img
               src=""
-              alt="Las fundadoras de Regocijo Detalles"
+              alt="Las fundadoras de Regocijo Floristería"
               class="historia-img"
             />
             <div class="historia-img-badge">
               <span style="font-size:1.5rem;">🌸</span>
               <div>
                 <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.1rem;color:#292524;line-height:1;">Desde 2022</p>
-                <p style="font-family:'Jost',sans-serif;font-size:0.7rem;color:#78716c;">Bogotá, Colombia</p>
+                <p style="font-family:'Jost',sans-serif;font-size:0.7rem;color:#78716c;">Montería, Córdoba</p>
               </div>
             </div>
           </div>
@@ -62,7 +63,7 @@
             <p>
               Lo que empezó como una conversación informal se convirtió esa misma noche en un plan de negocio
               escrito en una servilleta. Días después, con mucha ilusión y una inversión inicial modesta,
-              Regocijo Detalles abrió sus puertas — o más bien, comenzó a llegar a las puertas de sus clientes.
+              Regocijo Floristería abrió sus puertas — o más bien, comenzó a llegar a las puertas de sus clientes.
             </p>
             <p>
               Hoy, más de dos años después, cada ramo que sale de nuestras manos lleva consigo el mismo cuidado
@@ -139,7 +140,7 @@
                 <span style="font-size:0.8rem;color:#ffc5d5;">✿</span>
               </div>
               <p class="fundadora-bio">
-                Sofía es la energía que mueve a Regocijo Detalles. Administradora de empresas de corazón,
+                Sofía es la energía que mueve a Regocijo Floristería. Administradora de empresas de corazón,
                 se asegura de que cada ramo llegue a tiempo, perfecto y con una sonrisa. Su favorita es
                 la lavanda, y su mayor satisfacción es ver la cara de felicidad de los clientes.
               </p>
@@ -245,7 +246,7 @@ const numeros = [
   { valor: '100%', label: 'Flores colombianas' },
 ]
 
-useHead({ title: 'Nosotros – Regocijo Detalles' })
+useHead({ title: 'Nosotros – Regocijo Floristería' })
 </script>
 
 <style scoped>

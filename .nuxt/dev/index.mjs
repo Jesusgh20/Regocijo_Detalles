@@ -648,7 +648,7 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "siteName": "Regocijo Detalles",
+    "siteName": "Regocijo Floristería",
     "siteUrl": "http://localhost:3000"
   }
 };
@@ -1023,7 +1023,7 @@ const _csjdG84hdShojmhibhLbJyILev_fTxVNGH3IT9UUdEY = (function(nitro) {
 
 const rootDir = "C:/Users/gonza/Desktop/JESUS/CODIGOS/Regocijo";
 
-const appHead = {"meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"name":"description","content":"Descubre nuestra colección de hermosos ramos de flores artesanales. Entrega a domicilio en toda la ciudad."}],"link":[{"rel":"icon","type":"image/png","href":"/regocijosinfondo.png"},{"rel":"preconnect","href":"https://fonts.googleapis.com"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap"}],"style":[],"script":[],"noscript":[],"title":"Regocijo Detalles – Ramos de Flores"};
+const appHead = {"meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"name":"description","content":"Descubre nuestra colección de hermosos ramos de flores artesanales. Entrega a domicilio en toda la ciudad."}],"link":[{"rel":"icon","type":"image/png","sizes":"32x32","href":"/regocijosinfondo.png"},{"rel":"icon","type":"image/png","sizes":"16x16","href":"/regocijosinfondo.png"},{"rel":"shortcut icon","href":"/regocijosinfondo.png"},{"rel":"apple-touch-icon","sizes":"180x180","href":"/regocijosinfondo.png"},{"rel":"preconnect","href":"https://fonts.googleapis.com"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap"}],"style":[],"script":[],"noscript":[],"title":"Regocijo Floristería – Ramos de Flores"};
 
 const appRootTag = "div";
 

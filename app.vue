@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <YellowFlowersSplash />
+    <!-- <YellowFlowersSplash /> -->
     <NuxtPage />
   </NuxtLayout>
 </template>

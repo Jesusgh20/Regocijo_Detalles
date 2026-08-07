@@ -13,9 +13,10 @@
     <div v-else>
 
       <!-- BREADCRUMB -->
-      <div style="background:#faf8f3;border-bottom:1px solid #ffe8ee;">
+      <div style="position:relative;overflow:hidden;background:#faf8f3;border-bottom:1px solid #ffe8ee;">
+        <client-only><PetalCanvas /></client-only>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 py-3 flex items-center gap-2"
-             style="font-family:'Jost',sans-serif;font-size:0.78rem;color:#a8a29e;">
+             style="font-family:'Jost',sans-serif;font-size:0.78rem;color:#a8a29e;position:relative;z-index:2;">
           <NuxtLink to="/" class="breadcrumb-link">Inicio</NuxtLink>
           <span>/</span>
           <NuxtLink to="/catalogo" class="breadcrumb-link">Catálogo</NuxtLink>
@@ -30,53 +31,10 @@
 
           <!-- ── CARRUSEL ── -->
           <div class="carrusel-col">
-            <div class="main-image-wrapper">
-              <Transition :name="transitionName" mode="out-in">
-                <img
-                  :key="imagenActiva"
-                  :src="imagenes[imagenActiva]"
-                  :alt="`${ramo.nombre} - imagen ${imagenActiva + 1}`"
-                  class="main-image"
-                />
-              </Transition>
-
-              <div style="position:absolute;top:1rem;left:1rem;">
-                <span :class="['category-badge', `category-badge--${ramo.categoria.toLowerCase()}`]">
-                  {{ ramo.categoria }}
-                </span>
-              </div>
-              <div v-if="ramo.destacado" style="position:absolute;top:1rem;right:1rem;">
-                <span style="background:#faf4e5;color:#b8903a;" class="category-badge">✦ Destacado</span>
-              </div>
-
-              <button v-if="imagenes.length > 1" class="carrusel-arrow carrusel-arrow--left"
-                      @click="navegarCarrusel(-1)" aria-label="Anterior">
-                <svg xmlns="http://www.w3.org/2000/svg" style="height:1.1rem;width:1.1rem;" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <button v-if="imagenes.length > 1" class="carrusel-arrow carrusel-arrow--right"
-                      @click="navegarCarrusel(1)" aria-label="Siguiente">
-                <svg xmlns="http://www.w3.org/2000/svg" style="height:1.1rem;width:1.1rem;" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-
-              <div v-if="imagenes.length > 1" class="carrusel-dots">
-                <button v-for="(_, idx) in imagenes" :key="idx"
-                  :class="['carrusel-dot', imagenActiva === idx ? 'carrusel-dot--active' : '']"
-                  @click="irImagen(idx)" />
-              </div>
-            </div>
-
-            <div v-if="imagenes.length > 1" class="thumbnails">
-              <button v-for="(img, idx) in imagenes" :key="idx"
-                :class="['thumb', imagenActiva === idx ? 'thumb--active' : '']"
-                @click="irImagen(idx)">
-                <img :src="img" :alt="`Miniatura ${idx + 1}`" style="width:100%;height:100%;object-fit:cover;" />
-              </button>
-            </div>
-          </div>
+            <client-only>
+              <ProductCarousel :images="imagenes" />
+            </client-only>
+          </div><!-- /carrusel-col -->
 
           <!-- ── INFO ── -->
           <div class="info-col">
@@ -99,8 +57,8 @@
                 </span>
               </div>
               <!-- Indicador de precio base en cards -->
-              <p class="precio-desde">
-                Desde {{ store.formatPrecio(ramo.precio) }} — precio según tamaño
+              <p class="precio-desde" v-if="ramo.variantes_precio && ramo.variantes_precio.length > 1">
+                Precio desde {{ store.formatPrecio(ramo.precio) }} — selecciona una variante
               </p>
             </div>
 
@@ -141,8 +99,8 @@
                 v-model="dedicatoria"
                 placeholder="Escribe un mensaje especial para incluir en el ramo..."
                 class="dedicatoria-input"
-                rows="3"
-              />
+                rows="3">
+              </textarea>
             </div>
 
             <div class="floral-divider" style="margin:1.5rem 0;">
@@ -174,8 +132,8 @@
               </div>
             </div>
 
-          </div>
-        </div>
+          </div><!-- /info-col -->
+        </div><!-- /detalle-grid -->
 
         <!-- TABS -->
         <div style="margin-top:4rem;">
@@ -209,7 +167,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div><!-- /tabs -->
 
         <!-- RELACIONADOS -->
         <div v-if="relacionados.length" style="margin-top:4rem;">
@@ -230,24 +188,37 @@
               </div>
             </article>
           </div>
-        </div>
+        </div><!-- /relacionados -->
 
-      </div>
-    </div>
+        <!-- Comments -->
+        <client-only>
+          <Comments v-if="ramo" :ramoId="ramo.id" />
+        </client-only>
+
+      </div><!-- /max-w-7xl -->
+    </div><!-- /v-else -->
+
 
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="showToast" class="toast-notification">
         <span>🌸</span>
-        <span style="font-family:'Jost',sans-serif;font-size:0.85rem;color:#292524;">¡Añadido al carrito!</span>
+        <span style="font-family:'Jost',sans-serif;font-size:0.85rem;color:#292524;flex:1;">¡Añadido al carrito!</span>
+        <button
+          style="font-family:'Jost',sans-serif;font-size:0.75rem;font-weight:700;color:#25D366;background:none;border:none;cursor:pointer;white-space:nowrap;padding:0;"
+          @click="abrirCarrito"
+        >Ver carrito →</button>
       </div>
     </Transition>
+
 
   </div>
 </template>
 
 <script setup lang="ts">
 import { useProductosStore } from '~/stores/productos'
+import Comments from '~/components/Comments.vue'
+import ProductCarousel from '~/components/ProductCarousel.vue'
 import type { Tamano } from '~/stores/productos'
 
 const route = useRoute()
@@ -256,26 +227,22 @@ const store = useProductosStore()
 const id   = computed(() => Number(route.params.id))
 const ramo = computed(() => store.getRamoById(id.value) ?? null)
 
-// Carrusel — usa el array real de imagenes del store
-const imagenes = computed(() => ramo.value?.imagenes ?? [])
-
-const imagenActiva   = ref(0)
+// Carrusel
+const imagenes      = computed(() => ramo.value?.imagenes ?? [])
+const imagenActiva  = ref(0)
 const transitionName = ref('slide-left')
 
-function navegarCarrusel(dir: 1 | -1) {
-  transitionName.value = dir === 1 ? 'slide-left' : 'slide-right'
-  imagenActiva.value = (imagenActiva.value + dir + imagenes.value.length) % imagenes.value.length
-}
-function irImagen(idx: number) {
-  transitionName.value = idx > imagenActiva.value ? 'slide-left' : 'slide-right'
-  imagenActiva.value = idx
-}
+watch(id, () => { imagenActiva.value = 0 })
 
-// ── Tamaño seleccionado (mediano por defecto) ──
-const tamanoSeleccionado = ref('mediano')
+// ── Tamaño seleccionado (primer tamaño por defecto) ──
+const tamanoSeleccionado = ref('')
 
-// Resetear al cambiar de producto
-watch(id, () => { tamanoSeleccionado.value = 'mediano'; imagenActiva.value = 0 })
+// Cuando cambia el ramo, seleccionar el primer tamaño disponible
+watch(ramo, (r) => {
+  if (r && r.tamanos.length > 0) {
+    tamanoSeleccionado.value = r.tamanos[0].value
+  }
+}, { immediate: true })
 
 // ── Precio reactivo según tamaño ──────────────
 const precioActual = computed<number>(() => {
@@ -286,6 +253,7 @@ const precioActual = computed<number>(() => {
 
 const tamanoActual = computed<Tamano | undefined>(() =>
   ramo.value?.tamanos.find(t => t.value === tamanoSeleccionado.value)
+    ?? ramo.value?.tamanos[0]
 )
 
 // Dedicatoria
@@ -305,12 +273,18 @@ const whatsappUrl = computed(() => {
 
 // Carrito — pasa el tamaño con precio correcto
 const showToast = ref(false)
+const carritoAbierto = useState('carritoAbierto', () => false)
 
 function agregarAlCarrito() {
   if (!ramo.value || !tamanoActual.value) return
   store.agregarAlCarrito(ramo.value, tamanoActual.value)
   showToast.value = true
-  setTimeout(() => { showToast.value = false }, 2200)
+  setTimeout(() => { showToast.value = false }, 2800)
+}
+
+function abrirCarrito() {
+  showToast.value = false
+  carritoAbierto.value = true
 }
 
 // Tabs
@@ -326,7 +300,7 @@ const detalles = computed(() => ramo.value && tamanoActual.value ? [
   { label: 'Tamaño',    valor: `${tamanoActual.value.label} — ${tamanoActual.value.flores}` },
   { label: 'Precio',    valor: store.formatPrecio(precioActual.value) },
   { label: 'Disponible', valor: ramo.value.disponible ? 'Sí' : 'No' },
-  { label: 'Empaque',   valor: 'Papel kraft + cinta satinada' },
+  { label: 'Empaque',   valor: 'Papel coreano + cinta satinada' },
   { label: 'Entrega',   valor: 'Mismo día (pedidos antes 4pm)' },
 ] : [])
 
@@ -350,13 +324,13 @@ const relacionados = computed(() =>
 )
 
 const entregaInfo = [
-  { emoji: '🚚', texto: 'Entrega el mismo día en Bogotá' },
+  { emoji: '🚚', texto: 'Entrega el mismo día en Montería' },
   { emoji: '🎁', texto: 'Empaque regalo incluido sin costo' },
   { emoji: '💳', texto: 'PSE, tarjeta de crédito o efectivo' },
 ]
 
 useHead(() => ({
-  title: ramo.value ? `${ramo.value.nombre} – Regocijo Detalles` : 'Producto – Regocijo Detalles',
+  title: ramo.value ? `${ramo.value.nombre} – Regocijo Floristería` : 'Producto – Regocijo Floristería',
   meta: ramo.value ? [{ name: 'description', content: ramo.value.descripcion }] : [],
 }))
 </script>
@@ -373,26 +347,6 @@ useHead(() => ({
 .detalle-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
 @media (min-width: 768px)  { .detalle-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
 @media (min-width: 1024px) { .detalle-grid { grid-template-columns: 55% 1fr; gap: 4rem; } }
-
-/* Carrusel */
-.main-image-wrapper { position: relative; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 4/3; background: #f5f5f4; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
-.main-image { width: 100%; height: 100%; object-fit: cover; display: block; }
-.slide-left-enter-active, .slide-left-leave-active,
-.slide-right-enter-active, .slide-right-leave-active { transition: all 0.35s ease; position: absolute; inset: 0; }
-.slide-left-enter-from  { transform: translateX(60px);  opacity: 0; }
-.slide-left-leave-to    { transform: translateX(-60px); opacity: 0; }
-.slide-right-enter-from { transform: translateX(-60px); opacity: 0; }
-.slide-right-leave-to   { transform: translateX(60px);  opacity: 0; }
-.carrusel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #44403c; box-shadow: 0 4px 16px rgba(0,0,0,0.12); transition: all 0.15s; z-index: 10; }
-.carrusel-arrow:hover { background: white; color: #f25480; }
-.carrusel-arrow--left  { left: 0.75rem; }
-.carrusel-arrow--right { right: 0.75rem; }
-.carrusel-dots { position: absolute; bottom: 0.75rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; z-index: 10; }
-.carrusel-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; padding: 0; }
-.carrusel-dot--active { background: white; width: 22px; border-radius: 4px; }
-.thumbnails { display: flex; gap: 0.6rem; margin-top: 0.75rem; }
-.thumb { width: 72px; height: 72px; border-radius: 0.75rem; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s; padding: 0; background: none; flex-shrink: 0; }
-.thumb--active { border-color: #f25480; box-shadow: 0 0 0 2px rgba(242,84,128,0.2); }
 
 /* Info */
 .info-col { display: flex; flex-direction: column; }

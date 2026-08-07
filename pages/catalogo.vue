@@ -3,6 +3,7 @@
 
     <!-- HEADER -->
     <section class="catalogo-header">
+      <client-only><PetalCanvas /></client-only>
       <div class="absolute inset-0 pointer-events-none">
         <div style="position:absolute;top:-40px;right:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,197,213,0.3) 0%,transparent 70%);"></div>
         <div style="position:absolute;bottom:-20px;left:10%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(205,220,188,0.25) 0%,transparent 70%);"></div>
@@ -87,42 +88,7 @@
       </div>
 
       <div v-if="ramosPagina.length > 0" class="productos-grid">
-        <article v-for="(ramo, idx) in ramosPagina" :key="ramo.id"
-          class="product-card group catalogo-card"
-          :style="{ animationDelay: `${idx * 60}ms` }">
-
-          <div class="relative overflow-hidden" style="aspect-ratio:4/3;">
-            <img :src="ramo.imagen_url" :alt="ramo.nombre"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy"/>
-            <div class="absolute top-3 left-3">
-              <span :class="['category-badge', `category-badge--${ramo.categoria.toLowerCase()}`]">{{ ramo.categoria }}</span>
-            </div>
-            <div v-if="ramo.destacado" class="absolute top-3 right-3">
-              <span style="background:#faf4e5;color:#b8903a;" class="category-badge">Destacado</span>
-            </div>
-            <div class="card-overlay">
-              <NuxtLink :to="`/producto/${ramo.id}`" class="btn-primary" style="font-size:0.8rem;padding:0.6rem 1.2rem;">Ver detalle</NuxtLink>
-            </div>
-          </div>
-
-          <div class="p-5">
-            <NuxtLink :to="`/producto/${ramo.id}`" class="card-title-link">
-              <h2 class="card-title">{{ ramo.nombre }}</h2>
-            </NuxtLink>
-            <p class="card-desc">{{ ramo.descripcion }}</p>
-            <div class="card-footer">
-              <span class="card-price">{{ productosStore.formatPrecio(ramo.precio) }}</span>
-              <div class="card-actions">
-                <button class="add-btn" title="Agregar al carrito" @click.prevent="agregarConFeedback(ramo)">
-                  <svg xmlns="http://www.w3.org/2000/svg" style="height:1rem;width:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                  </svg>
-                </button>
-                <NuxtLink :to="`/producto/${ramo.id}`" class="ver-btn">Ver mas</NuxtLink>
-              </div>
-            </div>
-          </div>
-        </article>
+  <CatalogCard v-for="(ramo, idx) in ramosPagina" :key="ramo.id" :ramo="ramo" :style="{ animationDelay: `${idx * 60}ms` }" />
       </div>
 
       <div v-else class="empty-state">
@@ -164,6 +130,7 @@
 
 <script setup lang="ts">
 import { useProductosStore } from '~/stores/productos'
+import CatalogCard from '~/components/CatalogCard.vue'
 import type { Ramo } from '~/stores/productos'
 
 const productosStore = useProductosStore()
@@ -173,7 +140,7 @@ const busqueda        = ref('')
 const categoriaActiva = ref('Todos')
 const orden           = ref('default')
 const paginaActual    = ref(1)
-const POR_PAGINA      = 6
+const POR_PAGINA      = 9
 
 onMounted(() => {
   if (route.query.categoria) categoriaActiva.value = route.query.categoria as string
@@ -187,10 +154,15 @@ const categorias = computed(() => {
 
 const ramosFiltrados = computed(() => {
   let lista = [...productosStore.ramos]
-  if (categoriaActiva.value !== 'Todos') lista = lista.filter(r => r.categoria === categoriaActiva.value)
+  if (categoriaActiva.value !== 'Todos') lista = lista.filter(r => r.categoria.toLowerCase() === categoriaActiva.value.toLowerCase())
   if (busqueda.value.trim()) {
     const q = busqueda.value.toLowerCase()
-    lista = lista.filter(r => r.nombre.toLowerCase().includes(q) || r.descripcion.toLowerCase().includes(q))
+    lista = lista.filter(r =>
+      r.nombre.toLowerCase().includes(q) ||
+      r.descripcion.toLowerCase().includes(q) ||
+      r.categoria.toLowerCase().includes(q) ||
+      (r.tags_busqueda ?? []).some((t: string) => t.toLowerCase().includes(q))
+    )
   }
   switch (orden.value) {
     case 'precio-asc':  lista.sort((a, b) => a.precio - b.precio); break
@@ -243,7 +215,7 @@ function agregarConFeedback(ramo: Ramo) {
   toastTimer = setTimeout(() => { showToast.value = false }, 2000)
 }
 
-useHead({ title: 'Catalogo - Regocijo Detalles' })
+useHead({ title: 'Catalogo - Regocijo Floristería' })
 </script>
 
 <style scoped>

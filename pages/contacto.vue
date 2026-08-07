@@ -5,6 +5,7 @@
          HEADER
     ══════════════════════════════════════ -->
     <section class="contacto-header">
+      <client-only><PetalCanvas /></client-only>
       <div class="absolute inset-0 pointer-events-none">
         <div style="position:absolute;top:-60px;right:-60px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(255,197,213,0.35) 0%,transparent 70%);"></div>
         <div style="position:absolute;bottom:-30px;left:5%;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(205,220,188,0.25) 0%,transparent 70%);"></div>
@@ -193,7 +194,7 @@
                 <span style="font-size:2rem;">🌸</span>
               </div>
               <div>
-                <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;color:#292524;line-height:1;">Regocijo Detalles</h3>
+                <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;color:#292524;line-height:1;">Regocijo Floristería</h3>
                 <p style="font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:#f25480;margin-top:2px;">Florería artesanal</p>
               </div>
             </div>
@@ -339,7 +340,7 @@ async function enviarFormulario() {
   await new Promise(resolve => setTimeout(resolve, 1400))
 
   // TODO: reemplazar con llamada real al backend o servicio de email
-  console.log('[Regocijo Detalles] Nuevo mensaje de contacto:', {
+  console.log('[Regocijo Floristería] Nuevo mensaje de contacto:', {
     nombre:   form.nombre,
     email:    form.email,
     telefono: form.telefono || 'no indicado',
@@ -367,7 +368,7 @@ const datosContacto = [
   { label: 'Dirección',  emoji: '📍', valor: 'Solo Domicilio, Montería - Córdoba', href: 'https://maps.google.com', target: '_blank', bgColor: '#fff5f7' },
   { label: 'Teléfono',   emoji: '📞', valor: '+57 312 750 6785', href: 'tel:+573127506785', bgColor: '#f4f7f0' },
   { label: 'WhatsApp',   emoji: '💬', valor: '+57 312 750 6785', href: whatsappUrl, target: '_blank', bgColor: '#f0fdf4' },
-  { label: 'Email',      emoji: '✉️', valor: 'hola@regocijodetalles.co', href: 'mailto:hola@regocijodetalles.co', bgColor: '#faf4e5' },
+  { label: 'Email',      emoji: '✉️', valor: 'hola@regocijofloristeria.co', href: 'mailto:hola@regocijofloristeria.co', bgColor: '#faf4e5' },
 ]
 
 const horarios = [
@@ -383,7 +384,7 @@ const redes = [
   { nombre: 'Pinterest', emoji: '📌', href: '#', color: '#fff0f0' },
 ]
 
-useHead({ title: 'Contacto – Regocijo Detalles' })
+useHead({ title: 'Contacto – Regocijo Floristería' })
 </script>
 
 <style scoped>

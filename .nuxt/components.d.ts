@@ -12,7 +12,15 @@ type HydrationStrategies = {
 }
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 interface _GlobalComponents {
-      'YellowFlowersSplash': typeof import("../components/YellowFlowersSplash.vue")['default']
+      'CarritoDrawer': typeof import("../components/CarritoDrawer.vue")['default']
+    'CatalogCard': typeof import("../components/CatalogCard.vue")['default']
+    'Comments': typeof import("../components/Comments.vue")['default']
+    'EditorLienzo': typeof import("../components/EditorLienzo.vue")['default']
+    'EditorSelector': typeof import("../components/EditorSelector.vue")['default']
+    'PetalCanvas': typeof import("../components/PetalCanvas.vue")['default']
+    'PolicyModal': typeof import("../components/PolicyModal.vue")['default']
+    'ProductCarousel': typeof import("../components/ProductCarousel.vue")['default']
+    'YellowFlowersSplash': typeof import("../components/YellowFlowersSplash.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
     'NuxtErrorBoundary': typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -37,7 +45,15 @@ interface _GlobalComponents {
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
-      'LazyYellowFlowersSplash': LazyComponent<typeof import("../components/YellowFlowersSplash.vue")['default']>
+      'LazyCarritoDrawer': LazyComponent<typeof import("../components/CarritoDrawer.vue")['default']>
+    'LazyCatalogCard': LazyComponent<typeof import("../components/CatalogCard.vue")['default']>
+    'LazyComments': LazyComponent<typeof import("../components/Comments.vue")['default']>
+    'LazyEditorLienzo': LazyComponent<typeof import("../components/EditorLienzo.vue")['default']>
+    'LazyEditorSelector': LazyComponent<typeof import("../components/EditorSelector.vue")['default']>
+    'LazyPetalCanvas': LazyComponent<typeof import("../components/PetalCanvas.vue")['default']>
+    'LazyPolicyModal': LazyComponent<typeof import("../components/PolicyModal.vue")['default']>
+    'LazyProductCarousel': LazyComponent<typeof import("../components/ProductCarousel.vue")['default']>
+    'LazyYellowFlowersSplash': LazyComponent<typeof import("../components/YellowFlowersSplash.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
     'LazyNuxtErrorBoundary': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>
@@ -68,6 +84,14 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
+export const CarritoDrawer: typeof import("../components/CarritoDrawer.vue")['default']
+export const CatalogCard: typeof import("../components/CatalogCard.vue")['default']
+export const Comments: typeof import("../components/Comments.vue")['default']
+export const EditorLienzo: typeof import("../components/EditorLienzo.vue")['default']
+export const EditorSelector: typeof import("../components/EditorSelector.vue")['default']
+export const PetalCanvas: typeof import("../components/PetalCanvas.vue")['default']
+export const PolicyModal: typeof import("../components/PolicyModal.vue")['default']
+export const ProductCarousel: typeof import("../components/ProductCarousel.vue")['default']
 export const YellowFlowersSplash: typeof import("../components/YellowFlowersSplash.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
@@ -93,6 +117,14 @@ export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const NuxtRouteAnnouncer: typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
+export const LazyCarritoDrawer: LazyComponent<typeof import("../components/CarritoDrawer.vue")['default']>
+export const LazyCatalogCard: LazyComponent<typeof import("../components/CatalogCard.vue")['default']>
+export const LazyComments: LazyComponent<typeof import("../components/Comments.vue")['default']>
+export const LazyEditorLienzo: LazyComponent<typeof import("../components/EditorLienzo.vue")['default']>
+export const LazyEditorSelector: LazyComponent<typeof import("../components/EditorSelector.vue")['default']>
+export const LazyPetalCanvas: LazyComponent<typeof import("../components/PetalCanvas.vue")['default']>
+export const LazyPolicyModal: LazyComponent<typeof import("../components/PolicyModal.vue")['default']>
+export const LazyProductCarousel: LazyComponent<typeof import("../components/ProductCarousel.vue")['default']>
 export const LazyYellowFlowersSplash: LazyComponent<typeof import("../components/YellowFlowersSplash.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>

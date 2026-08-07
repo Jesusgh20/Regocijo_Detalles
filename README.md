@@ -1,4 +1,4 @@
-# 🌸 Regocijo Detalles — Proyecto Base Nuxt 3
+# 🌸 Regocijo Floristería — Proyecto Base Nuxt 3
 
 Tienda online de ramos de flores artesanales construida con **Nuxt.js 3**, **Tailwind CSS** y **Pinia**.
 
