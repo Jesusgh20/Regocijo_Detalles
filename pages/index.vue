@@ -31,7 +31,7 @@
           <div class="rg-img-frame rg-img-main"
             :style="!isMobile ? { transform: `translate(${parallax.main.x}px,${parallax.main.y}px)` } : {}">
             <div class="rg-img-inner">
-              <img src="/Encanto1.jpg" alt="Ramo de rosas" loading="eager" />
+              <img src="/encanto1.jpg" alt="Ramo de rosas" loading="eager" />
               <div class="rg-img-shine"></div>
             </div>
           </div>
@@ -47,7 +47,7 @@
           <div class="rg-img-frame rg-img-sec2"
             :style="!isMobile ? { transform: `translate(${parallax.sec2.x}px,${parallax.sec2.y}px)` } : {}">
             <div class="rg-img-inner">
-              <img src="/Encanto2.jpg" alt="Flores mixtas" loading="eager" />
+              <img src="/encanto2.jpg" alt="Flores mixtas" loading="eager" />
               <div class="rg-img-shine"></div>
             </div>
           </div>
