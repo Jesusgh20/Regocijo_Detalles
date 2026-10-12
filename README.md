@@ -1,104 +1,56 @@
-# 🌸 Regocijo Floristería — Proyecto Base Nuxt 3
+# Regocijo Floristería
 
-Tienda online de ramos de flores artesanales construida con **Nuxt.js 3**, **Tailwind CSS** y **Pinia**.
+Tienda en línea de ramos de flores artesanales (Montería, Córdoba). Hecha con **Nuxt 3**, **Tailwind CSS 4** y **Pinia**. Los pedidos y consultas se cierran por **WhatsApp**: el sitio no cobra ni guarda datos.
 
----
+Revisa **[AUDITORIA.md](AUDITORIA.md)** antes de publicar: lista lo que cambió y los datos legales que debes completar.
 
-## 🚀 Inicio rápido
+**Panel para subir y editar ramos:** `/admin` (Supabase). Guía de instalación: **[SUPABASE.md](SUPABASE.md)**. Sin configurarlo, el sitio usa el catálogo escrito en el código.
+
+## Inicio rápido
 
 ```bash
-# 1. Instalar dependencias
 npm install
-
-# 2. Ejecutar en modo desarrollo
-npm run dev
-
-# 3. Abrir en el navegador
-# http://localhost:3000
+npm run dev        # http://localhost:3000
+npm run build      # compila para producción
+npm run preview    # prueba la versión compilada
 ```
 
----
+## Dónde cambiar cada cosa
 
-## 📁 Estructura del proyecto
-
-```
-regocijo-detalles/
-├── assets/
-│   └── css/
-│       └── tailwind.css        # Estilos globales + componentes utilitarios
-│
-├── layouts/
-│   └── default.vue             # Layout principal (header + footer)
-│
-├── pages/
-│   ├── index.vue               # Página de inicio (hero + destacados)
-│   └── tienda.vue              # Catálogo con filtros por categoría
-│
-├── stores/
-│   └── productos.ts            # Store de Pinia con 5 ramos hardcoded
-│
-├── app.vue                     # Raíz de la aplicación
-├── nuxt.config.ts              # Configuración de Nuxt
-├── tailwind.config.ts          # Paleta floral personalizada
-└── package.json
-```
-
----
-
-## 🏪 Store de Pinia (`stores/productos.ts`)
-
-### Estado
-| Propiedad | Tipo | Descripción |
-|---|---|---|
-| `ramos` | `Ramo[]` | Array de 5 ramos hardcoded |
-| `carritoItems` | `{ ramo, cantidad }[]` | Ítems en el carrito |
-| `categoriaActiva` | `string` | Filtro de categoría activo |
-| `busqueda` | `string` | Texto de búsqueda |
-
-### Getters (computed)
-- `ramosFiltrados` — Ramos según categoría y búsqueda activa
-- `ramoDestacados` — Solo ramos con `destacado: true`
-- `categorias` — Lista única de categorías + "Todos"
-- `totalCarrito` — Suma total del carrito
-- `cantidadCarrito` — Cantidad de ítems en carrito
-
-### Actions
-- `agregarAlCarrito(ramo)` — Añade o incrementa ítem
-- `quitarDelCarrito(ramoId)` — Decrementa o elimina ítem
-- `vaciarCarrito()` — Limpia el carrito
-- `getRamoById(id)` — Busca ramo por ID
-- `setCategoriaActiva(cat)` — Cambia filtro activo
-- `formatPrecio(precio)` — Formatea precio en COP
-
----
-
-## 🎨 Paleta de colores Tailwind
-
-| Token | Uso |
+| Qué | Dónde |
 |---|---|
-| `petal-*` | Rosas y toques de acento principal |
-| `sage-*` | Verdes sage para naturaleza y categorías especiales |
-| `cream-*` | Ámbar cálido para detalles dorados |
-| `blush` | Fondo rosado muy suave |
-| `ivory` | Fondo principal blanco cálido |
+| Teléfonos, horarios, Instagram, **titular, NIT, dirección, correo** | `data/negocio.ts` |
+| Catálogo, precios, descripciones, fotos | **El panel `/admin`** (o, de respaldo, `stores/productos.ts` y `public/`) |
+| Tablas y seguridad de la base de datos | `supabase/setup.sql` |
+| Claves de Supabase | `.env` (ver `.env.example`) |
+| Colores, tipografía, botones, campos | `assets/css/tailwind.css` (variables en `:root`) |
+| Política de privacidad / cookies / términos | `pages/privacidad.vue`, `pages/cookies.vue`, `pages/terminos.vue` |
 
----
+## Estructura
 
-## 🛠 Módulos instalados
+```
+assets/css/tailwind.css     Sistema de diseño (tokens, botones, formularios, foco, movimiento reducido)
+data/negocio.ts             Datos del negocio: una sola fuente
+utils/format.ts             Formato de precios, fechas y enlaces de WhatsApp
+composables/                useCarritoUI, useToast, useFocusTrap
+plugins/reveal.ts           Directiva v-reveal (aparición al hacer scroll)
+plugins/00.sanear-error.server.ts   Arregla la página 404/500 (ver comentario del archivo)
+stores/productos.ts         Catálogo de respaldo + carrito (Pinia)
+server/api/catalogo.get.ts  Lee el catálogo de Supabase (con caché y respaldo)
+utils/catalogoDb.ts         Mapeo base de datos ↔ catálogo
+composables/useSupabase.ts  Cliente y sesión del panel
+middleware/admin.ts         Protege las páginas del panel
+layouts/admin.vue           Diseño del panel
+supabase/setup.sql          Tablas, seguridad (RLS) y bucket de fotos
+layouts/default.vue         Encabezado, menú móvil y pie
+components/                 CatalogCard, CarritoDrawer, ProductCarousel, RamoImagen, PageHero, LegalPage, Ornament…
+pages/                      index, catalogo, producto/[slug], nosotros, contacto, privacidad, cookies, terminos
+pages/admin/                Panel: inicio de sesión, ramos (lista y formulario), categorías, nueva contraseña
+error.vue                   Página 404 / error
+```
 
-| Módulo | Versión | Uso |
-|---|---|---|
-| `@nuxtjs/tailwindcss` | ^6.12 | Integración Tailwind CSS |
-| `@pinia/nuxt` | ^0.5 | Integración Pinia para Nuxt 3 |
-| `pinia` | ^2.2 | Gestión de estado |
+## Notas
 
----
-
-## 📦 Próximos pasos sugeridos
-
-- [ ] Crear página de detalle de producto `/tienda/[id].vue`
-- [ ] Implementar sidebar/modal del carrito
-- [ ] Añadir página `/contacto.vue` con formulario
-- [ ] Conectar con backend / headless CMS (Strapi, Sanity, etc.)
-- [ ] Añadir animaciones de entrada con `@vueuse/motion`
-- [ ] Internacionalización con `@nuxtjs/i18n`
+- **Sin cookies ni analíticas** para quienes visitan la tienda (solo la sesión de la administradora en `/admin`). Las fuentes se alojan en el propio sitio (no se llama a Google Fonts). Si añades analíticas, publicidad o una pasarela de pago, actualiza las políticas y pide consentimiento antes de activarlas.
+- **Imágenes:** optimízalas antes de subirlas (≈1.500 px de lado largo, JPEG). Los ramos sin foto muestran "Foto próximamente".
+- La ruta antigua `/editar-ramo` redirige al catálogo (301).

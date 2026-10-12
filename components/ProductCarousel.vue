@@ -1,142 +1,140 @@
 <template>
-  <div class="carrusel-col">
-    <div class="main-image-wrapper glass-card" ref="wrapper">
-      <Transition :name="transitionName" mode="out-in">
-        <img
-          :key="imagenActiva"
-          :src="images[imagenActiva]"
-          :alt="`Imagen ${imagenActiva + 1}`"
-          class="main-image"
+  <div class="pc" role="region" aria-roledescription="carrusel" :aria-label="`Fotos de ${nombre}`">
+    <div
+      ref="marco"
+      class="pc-frame"
+      tabindex="0"
+      :aria-label="total > 1 ? 'Usa las flechas izquierda y derecha para cambiar de foto' : undefined"
+      @keydown.left.prevent="ir(-1)"
+      @keydown.right.prevent="ir(1)"
+      @pointerdown="onDown"
+      @pointerup="onUp"
+      @pointercancel="arrastrando = false"
+    >
+      <Transition name="pc-fade" mode="out-in">
+        <RamoImagen
+          :key="activa"
+          :src="imagenes[activa] ?? null"
+          :alt="altImagen({ nombre, descripcion, imagenes }, activa)"
+          :nombre="nombre"
+          :categoria="categoria"
+          :prioridad="activa === 0"
+          class="pc-img"
         />
       </Transition>
-      <button v-if="images.length > 1" class="carrusel-arrow carrusel-arrow--left" @click="navigate(-1)" aria-label="Anterior">
-        <svg xmlns="http://www.w3.org/2000/svg" style="height:1.1rem;width:1.1rem;" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-      <button v-if="images.length > 1" class="carrusel-arrow carrusel-arrow--right" @click="navigate(1)" aria-label="Siguiente">
-        <svg xmlns="http://www.w3.org/2000/svg" style="height:1.1rem;width:1.1rem;" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-      <div v-if="images.length > 1" class="carrusel-dots">
-        <button v-for="(_, idx) in images" :key="idx"
-                :class="['carrusel-dot', imagenActiva === idx ? 'carrusel-dot--active' : '']"
-                @click="goTo(idx)" />
-      </div>
+
+      <template v-if="total > 1">
+        <button type="button" class="pc-arrow pc-arrow--l" aria-label="Foto anterior" @click="ir(-1)">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+        </button>
+        <button type="button" class="pc-arrow pc-arrow--r" aria-label="Foto siguiente" @click="ir(1)">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+        <p class="pc-count" aria-hidden="true">{{ activa + 1 }} / {{ total }}</p>
+      </template>
     </div>
-    <div v-if="images.length > 1" class="thumbnails">
-      <button v-for="(img, idx) in images" :key="idx"
-              :class="['thumb', imagenActiva === idx ? 'thumb--active' : '']"
-              @click="goTo(idx)">
-        <img :src="img" :alt="`Miniatura ${idx + 1}`" style="width:100%;height:100%;object-fit:cover;" />
-      </button>
-    </div>
+
+    <!-- Anuncio para lectores de pantalla -->
+    <p class="sr-only" aria-live="polite">{{ total > 1 ? `Foto ${activa + 1} de ${total}` : '' }}</p>
+
+    <ul v-if="total > 1" class="pc-thumbs" aria-label="Miniaturas">
+      <li v-for="(img, i) in imagenes" :key="img">
+        <button
+          type="button"
+          class="pc-thumb"
+          :class="{ 'pc-thumb--on': i === activa }"
+          :aria-label="`Ver foto ${i + 1} de ${total}`"
+          :aria-current="i === activa ? 'true' : undefined"
+          @click="activa = i"
+        >
+          <img :src="img" alt="" loading="lazy" decoding="async" />
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { altImagen } from '~/stores/productos'
 
-const props = defineProps<{ images: string[] }>();
+const props = defineProps<{
+  imagenes: string[]
+  nombre: string
+  descripcion: string
+  categoria?: string
+}>()
 
-const imagenActiva = ref(0);
-const transitionName = ref('slide-left');
+const activa = ref(0)
+const total = computed(() => props.imagenes.length)
+const marco = ref<HTMLElement | null>(null)
 
-function navigate(dir: 1 | -1) {
-  transitionName.value = dir === 1 ? 'slide-left' : 'slide-right';
-  imagenActiva.value = (imagenActiva.value + dir + props.images.length) % props.images.length;
+watch(() => props.imagenes, () => { activa.value = 0 })
+
+function ir(dir: 1 | -1) {
+  if (total.value < 2) return
+  activa.value = (activa.value + dir + total.value) % total.value
 }
 
-function goTo(idx: number) {
-  transitionName.value = idx > imagenActiva.value ? 'slide-left' : 'slide-right';
-  imagenActiva.value = idx;
+// Deslizar con el dedo (o arrastrar con el mouse)
+let x0 = 0
+let y0 = 0
+const arrastrando = ref(false)
+function onDown(e: PointerEvent) {
+  if ((e.target as HTMLElement).closest('button')) return
+  arrastrando.value = true
+  x0 = e.clientX
+  y0 = e.clientY
 }
-
-// Touch / pointer handling
-let startX = 0;
-let isSwiping = false;
-const threshold = 50; // px
-
-function onPointerDown(event: Event) {
-  startX = (event as PointerEvent).clientX;
-  isSwiping = true;
+function onUp(e: PointerEvent) {
+  if (!arrastrando.value) return
+  arrastrando.value = false
+  const dx = e.clientX - x0
+  const dy = e.clientY - y0
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) ir(dx < 0 ? 1 : -1)
 }
-function onPointerMove(event: Event) {
-  if (!isSwiping) return;
-  const diff = (event as PointerEvent).clientX - startX;
-  if (Math.abs(diff) > threshold) {
-    navigate(diff > 0 ? -1 : 1);
-    isSwiping = false;
-  }
-}
-function onPointerUp() {
-  isSwiping = false;
-}
-
-onMounted(() => {
-  const wrapper = document.querySelector('.main-image-wrapper');
-  if (wrapper) {
-    wrapper.addEventListener('pointerdown', onPointerDown);
-    wrapper.addEventListener('pointermove', onPointerMove);
-    wrapper.addEventListener('pointerup', onPointerUp);
-    wrapper.addEventListener('pointercancel', onPointerUp);
-  }
-});
-
-onBeforeUnmount(() => {
-  const wrapper = document.querySelector('.main-image-wrapper');
-  if (wrapper) {
-    wrapper.removeEventListener('pointerdown', onPointerDown);
-    wrapper.removeEventListener('pointermove', onPointerMove);
-    wrapper.removeEventListener('pointerup', onPointerUp);
-    wrapper.removeEventListener('pointercancel', onPointerUp);
-  }
-});
 </script>
 
 <style scoped>
-.main-image-wrapper {
-  position: relative;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  aspect-ratio: 4/3;
-  background: #f5f5f4;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+.pc-frame {
+  position: relative; aspect-ratio: 4 / 5; overflow: hidden;
+  border-radius: 999px 999px 2rem 2rem;
+  background: var(--blush);
+  box-shadow: var(--shadow-lift);
+  touch-action: pan-y;
+  cursor: grab;
 }
-.main-image { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Reuse transition classes from page */
-.slide-left-enter-active, .slide-left-leave-active,
-.slide-right-enter-active, .slide-right-leave-active {
-  transition: all 0.35s ease; position: absolute; inset: 0;
+.pc-frame:active { cursor: grabbing; }
+.pc-img { position: absolute; inset: 0; }
+.pc-fade-enter-active, .pc-fade-leave-active { transition: opacity 0.35s var(--ease-out); }
+.pc-fade-enter-from, .pc-fade-leave-to { opacity: 0; }
+
+.pc-arrow {
+  position: absolute; top: 50%; z-index: 3; transform: translateY(-50%);
+  display: grid; place-items: center; width: 3rem; height: 3rem;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255, 253, 249, 0.92); color: var(--ink);
+  box-shadow: 0 8px 22px -8px rgba(42, 26, 31, 0.45);
+  transition: background 0.25s, color 0.25s, transform 0.3s var(--ease-out);
 }
-.slide-left-enter-from  { transform: translateX(60px);  opacity: 0; }
-.slide-left-leave-to    { transform: translateX(-60px); opacity: 0; }
-.slide-right-enter-from { transform: translateX(-60px); opacity: 0; }
-.slide-right-leave-to   { transform: translateX(60px);  opacity: 0; }
-.carrusel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #44403c; box-shadow: 0 4px 16px rgba(0,0,0,0.12); transition: all 0.15s; z-index: 10; }
-.carrusel-arrow:hover { background: white; color: #f25480; }
-.carrusel-arrow--left  { left: 0.75rem; }
-.carrusel-arrow--right { right: 0.75rem; }
-.carrusel-dots { position: absolute; bottom: 0.75rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; z-index: 10; }
-.carrusel-dot { width: 8px; height: 8px; border-radius: 0.5rem; border: none; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; padding: 0; }
-.carrusel-dot--active { background: white; width: 22px; border-radius: 0.5rem; }
-.thumbnails { display: flex; gap: 0.6rem; margin-top: 0.75rem; }
-.thumb { width: 72px; height: 72px; border-radius: 0.75rem; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s; padding: 0; background: none; flex-shrink: 0; }
-.thumb--active { border-color: #f25480; box-shadow: 0 0 0 2px rgba(242,84,128,0.2); }
-/* Glass‑morphism */
-.glass-card {
-  backdrop-filter: blur(12px);
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+.pc-arrow:hover { background: var(--wine); color: #fff; }
+.pc-arrow:active { transform: translateY(-50%) scale(0.92); }
+.pc-arrow--l { left: 1rem; }
+.pc-arrow--r { right: 1rem; }
+.pc-count {
+  position: absolute; bottom: 1.1rem; left: 50%; z-index: 3; transform: translateX(-50%);
+  padding: 0.25rem 0.8rem; border-radius: 9999px;
+  background: rgba(42, 26, 31, 0.78); color: var(--cream);
+  font: 500 0.78rem var(--sans); letter-spacing: 0.12em;
 }
-@media (prefers-color-scheme: dark) {
-  .glass-card {
-    background: rgba(20,20,20,0.4);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
+
+.pc-thumbs { display: flex; gap: 0.6rem; margin: 1rem 0 0; padding: 0.35rem; list-style: none; overflow-x: auto; scrollbar-width: thin; }
+.pc-thumb {
+  display: block; width: 4.25rem; height: 5.25rem; padding: 0; flex-shrink: 0;
+  border: 2px solid transparent; border-radius: 0.9rem; overflow: hidden; cursor: pointer;
+  background: var(--blush); opacity: 0.7;
+  transition: opacity 0.25s, border-color 0.25s, transform 0.3s var(--ease-out);
 }
+.pc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pc-thumb:hover { opacity: 1; transform: translateY(-3px); }
+.pc-thumb--on { opacity: 1; border-color: var(--wine); }
 </style>

@@ -1,490 +1,149 @@
 <template>
   <div>
+    <PageHero eyebrow="Quiénes somos">
+      <template #title>La belleza de <em>sentir</em></template>
+      Somos una floristería de {{ NEGOCIO.ciudad }} que arma ramos artesanales y los lleva a domicilio.
+    </PageHero>
 
-    <!-- ══════════════════════════════════════
-         HERO
-    ══════════════════════════════════════ -->
-    <section class="nosotros-hero">
-      <client-only><PetalCanvas /></client-only>
-      <div class="absolute inset-0 pointer-events-none">
-        <div style="position:absolute;top:-60px;right:-40px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,197,213,0.35) 0%,transparent 70%);"></div>
-        <div style="position:absolute;bottom:-40px;left:8%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(205,220,188,0.3) 0%,transparent 70%);"></div>
+    <!-- Qué hacemos -->
+    <section class="section">
+      <div class="wrap about">
+        <div v-reveal class="about-media">
+          <div class="about-arch arch">
+            <img src="/pasionpura3.jpg" alt="Ramo de rosas rojas y rosadas con gipsofila, envuelto en papel blanco y sostenido con una mano" width="1500" height="2000" loading="lazy" decoding="async" />
+          </div>
+          <div class="about-round">
+            <img src="/dulceprimavera2.jpg" alt="Ramo mixto de margaritas y claveles de colores en envoltura rosada" width="1086" height="1448" loading="lazy" decoding="async" />
+          </div>
+        </div>
+
+        <div class="about-text">
+          <p v-reveal class="eyebrow">Qué hacemos</p>
+          <h2 v-reveal="80" class="display about-title">Flores armadas <em>a mano</em></h2>
+          <p v-reveal="140">
+            {{ NEGOCIO.nombre }} es una floristería de {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}. Armamos ramos artesanales
+            —rosas, lirios, girasoles y arreglos mixtos— y los entregamos a domicilio.
+          </p>
+          <p v-reveal="200">
+            Cada diseño se prepara por encargo, con el color y el tamaño que prefieras. Como trabajamos con flores naturales,
+            un arreglo puede variar un poco en flores, color o decoración según la disponibilidad del día.
+          </p>
+          <div v-reveal="260" class="about-div"><Ornament variant="divider" /></div>
+          <p v-reveal="300" class="about-sign">{{ NEGOCIO.lema }}.</p>
+        </div>
       </div>
-      <div class="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 text-center">
-        <p class="section-label mb-4">Nuestra historia</p>
-        <h1 class="nosotros-title">
-          Dos mujeres,<br>
-          <em class="text-gradient-floral">un sueño florido</em>
-        </h1>
-        <p class="nosotros-subtitle">
-          Regocijo Floristería nació del amor por las flores y la convicción de que cada momento merece ser celebrado con belleza.
+    </section>
+
+    <!-- Principios -->
+    <section class="section pr" aria-labelledby="pr-t">
+      <div class="wrap">
+        <header v-reveal class="center">
+          <p class="eyebrow eyebrow--center">Cómo trabajamos</p>
+          <h2 id="pr-t" class="display pr-title">Lo que nos <em>importa</em></h2>
+        </header>
+        <ul class="pr-grid">
+          <li v-for="(p, i) in principios" :key="p.t" v-reveal="i * 100" class="pr-card">
+            <span class="pr-ico" aria-hidden="true"><Ornament :variant="p.o" /></span>
+            <h3 class="pr-h">{{ p.t }}</h3>
+            <p>{{ p.d }}</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Galería -->
+    <section class="section gal" aria-labelledby="gal-t">
+      <div class="wrap">
+        <header v-reveal class="center">
+          <p class="eyebrow eyebrow--center">Nuestro trabajo</p>
+          <h2 id="gal-t" class="display pr-title">Algunos de nuestros <em>ramos</em></h2>
+        </header>
+        <ul class="gal-grid">
+          <li v-for="(g, i) in galeria" :key="g.src" v-reveal="(i % 3) * 90" :class="`gal-item gal-item--${i}`">
+            <img :src="g.src" :alt="g.alt" loading="lazy" decoding="async" />
+          </li>
+        </ul>
+        <p v-reveal class="center gal-cta">
+          <NuxtLink to="/catalogo" class="btn btn--wine">Ver el catálogo completo <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></NuxtLink>
         </p>
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════
-         HISTORIA
-    ══════════════════════════════════════ -->
-    <section class="max-w-4xl mx-auto px-6 lg:px-8 py-20">
-
-      <div class="historia-grid">
-
-        <!-- Imagen decorativa izquierda -->
-        <div class="historia-img-col">
-          <div class="historia-img-wrapper">
-            <!-- Reemplaza este src con tu foto real -->
-            <img
-              src=""
-              alt="Las fundadoras de Regocijo Floristería"
-              class="historia-img"
-            />
-            <div class="historia-img-badge">
-              <span style="font-size:1.5rem;">🌸</span>
-              <div>
-                <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.1rem;color:#292524;line-height:1;">Desde 2022</p>
-                <p style="font-family:'Jost',sans-serif;font-size:0.7rem;color:#78716c;">Montería, Córdoba</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Texto historia -->
-        <div class="historia-texto-col">
-          <p class="section-label mb-4">Cómo empezó todo</p>
-          <h2 class="historia-titulo">Un café, una idea y muchas flores</h2>
-
-          <div class="historia-parrafos">
-            <p>
-              Todo comenzó en una tarde lluviosa de 2022, cuando <strong>Valentina</strong> y <strong>Sofía</strong>
-              se encontraron tomando café y hablando, como siempre, de su pasión compartida: las flores.
-              Las dos habían crecido rodeadas de jardines, y desde pequeñas soñaban con crear algo propio que
-              pusiera color y alegría en la vida de las personas.
-            </p>
-            <p>
-              Lo que empezó como una conversación informal se convirtió esa misma noche en un plan de negocio
-              escrito en una servilleta. Días después, con mucha ilusión y una inversión inicial modesta,
-              Regocijo Floristería abrió sus puertas — o más bien, comenzó a llegar a las puertas de sus clientes.
-            </p>
-            <p>
-              Hoy, más de dos años después, cada ramo que sale de nuestras manos lleva consigo el mismo cuidado
-              y amor de ese primer día. Porque para nosotras, las flores no son solo un producto: son el idioma
-              con el que le decimos al mundo que lo queremos.
-            </p>
+    <!-- Contacto -->
+    <section class="section">
+      <div class="wrap wrap--narrow">
+        <div v-reveal class="end">
+          <h2 class="display end-title">¿Hablamos de tu <em>próximo ramo</em>?</h2>
+          <p class="end-text">Escríbenos y te ayudamos a elegir. También nos encuentras en Instagram.</p>
+          <div class="end-btns">
+            <NuxtLink to="/contacto" class="btn btn--wine">Ir a contacto</NuxtLink>
+            <a :href="NEGOCIO.instagram.url" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">
+              {{ NEGOCIO.instagram.usuario }}<span class="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- ══════════════════════════════════════
-         FUNDADORAS
-    ══════════════════════════════════════ -->
-    <section style="background: linear-gradient(135deg, #fff5f7 0%, #fdf0f3 50%, #f4f7f0 100%); padding: 5rem 0;">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-
-        <div class="text-center mb-14">
-          <p class="section-label mb-3">Las personas detrás de cada ramo</p>
-          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.8rem;color:#292524;line-height:1.1;">
-            Nuestras fundadoras
-          </h2>
-        </div>
-
-        <div class="fundadoras-grid">
-
-          <!-- Fundadora 1 -->
-          <div class="fundadora-card">
-            <div class="fundadora-foto-wrapper">
-              <!-- Reemplaza este src con la foto real de la fundadora 1 -->
-              <img
-                src=""
-                alt="Valentina"
-                class="fundadora-foto"
-              />
-              <div class="fundadora-foto-ring"></div>
-            </div>
-            <div class="fundadora-info">
-              <h3 class="fundadora-nombre">Valentina Ruiz</h3>
-              <p class="fundadora-rol">Co-fundadora · Diseño floral</p>
-              <div class="floral-divider" style="margin:1rem 0;">
-                <span style="font-size:0.8rem;color:#ffc5d5;">✿</span>
-              </div>
-              <p class="fundadora-bio">
-                Con estudios en diseño y una obsesión por las peonías, Valentina es quien da vida a cada
-                composición. Su ojo para el color y la forma convierte cada ramo en una pequeña obra de arte.
-                Cuando no está entre flores, la encuentras leyendo o explorando mercados de antigüedades.
-              </p>
-              <div class="fundadora-frase">
-                <span style="font-size:1.2rem;color:#ffc5d5;">"</span>
-                <em style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;color:#57534e;">
-                  Las flores son el lenguaje más honesto que existe.
-                </em>
-                <span style="font-size:1.2rem;color:#ffc5d5;">"</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Fundadora 2 -->
-          <div class="fundadora-card">
-            <div class="fundadora-foto-wrapper">
-              <!-- Reemplaza este src con la foto real de la fundadora 2 -->
-              <img
-                src=""
-                alt="Sofía"
-                class="fundadora-foto"
-              />
-              <div class="fundadora-foto-ring"></div>
-            </div>
-            <div class="fundadora-info">
-              <h3 class="fundadora-nombre">Sofía Morales</h3>
-              <p class="fundadora-rol">Co-fundadora · Operaciones y entregas</p>
-              <div class="floral-divider" style="margin:1rem 0;">
-                <span style="font-size:0.8rem;color:#ffc5d5;">✿</span>
-              </div>
-              <p class="fundadora-bio">
-                Sofía es la energía que mueve a Regocijo Floristería. Administradora de empresas de corazón,
-                se asegura de que cada ramo llegue a tiempo, perfecto y con una sonrisa. Su favorita es
-                la lavanda, y su mayor satisfacción es ver la cara de felicidad de los clientes.
-              </p>
-              <div class="fundadora-frase">
-                <span style="font-size:1.2rem;color:#ffc5d5;">"</span>
-                <em style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;color:#57534e;">
-                  Cada entrega es una oportunidad de alegrarle el día a alguien.
-                </em>
-                <span style="font-size:1.2rem;color:#ffc5d5;">"</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════
-         VALORES
-    ══════════════════════════════════════ -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-      <div class="text-center mb-14">
-        <p class="section-label mb-3">Lo que nos mueve</p>
-        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.8rem;color:#292524;line-height:1.1;">
-          Nuestros valores
-        </h2>
-      </div>
-      <div class="valores-grid">
-        <div v-for="valor in valores" :key="valor.titulo" class="valor-card">
-          <span class="valor-emoji">{{ valor.emoji }}</span>
-          <h3 class="valor-titulo">{{ valor.titulo }}</h3>
-          <p class="valor-desc">{{ valor.desc }}</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════
-         NUMEROS
-    ══════════════════════════════════════ -->
-    <section style="background:#292524;padding:4rem 0;">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="numeros-grid">
-          <div v-for="num in numeros" :key="num.label" class="numero-item">
-            <p class="numero-valor">{{ num.valor }}</p>
-            <p class="numero-label">{{ num.label }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════
-         CTA FINAL
-    ══════════════════════════════════════ -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-      <div class="cta-nosotros">
-        <div style="text-align:center;">
-          <span class="animate-float" style="font-size:3rem;display:block;margin-bottom:1rem;">💐</span>
-          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;color:#292524;margin-bottom:0.75rem;">
-            Sé parte de nuestra historia
-          </h2>
-          <p style="font-family:'Jost',sans-serif;font-size:0.9rem;color:#78716c;max-width:420px;margin:0 auto 2rem;line-height:1.8;">
-            Cada ramo que pides nos ayuda a seguir haciendo lo que amamos. Gracias por confiar en nosotras.
-          </p>
-          <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-            <NuxtLink to="/catalogo" class="btn-primary">Ver nuestros ramos</NuxtLink>
-            <NuxtLink to="/contacto" class="btn-outline">Escribirnos</NuxtLink>
-          </div>
-        </div>
-      </div>
-    </section>
-
   </div>
 </template>
 
 <script setup lang="ts">
-const valores = [
-  {
-    emoji: '🌸',
-    titulo: 'Frescura garantizada',
-    desc: 'Trabajamos solo con flores cortadas el mismo día. Nada de flores que han pasado días en bodega.',
-  },
-  {
-    emoji: '🤍',
-    titulo: 'Hecho con amor',
-    desc: 'Cada ramo es armado a mano, con atención a cada detalle, porque sabemos que lo vas a regalar con el corazón.',
-  },
-  {
-    emoji: '🌱',
-    titulo: 'Compromiso local',
-    desc: 'Compramos a floricultores colombianos. Apoyar lo nuestro es parte de nuestra identidad.',
-  },
-  {
-    emoji: '✨',
-    titulo: 'Experiencia especial',
-    desc: 'Desde el empaque hasta la entrega, queremos que recibir un ramo de Regocijo sea un momento memorable.',
-  },
+import { NEGOCIO } from '~/data/negocio'
+
+const principios = [
+  { o: 'bloom' as const, t: 'Hecho a mano', d: 'Cada ramo se arma uno por uno, con atención a los colores, el papel y el listón.' },
+  { o: 'sprig' as const, t: 'A tu medida', d: 'Elige el color de tus flores y el tamaño. Cuéntanos la ocasión y te ayudamos a decidir.' },
+  { o: 'sunflower' as const, t: 'A domicilio', d: `Llevamos tu ramo hasta la puerta en ${NEGOCIO.ciudad}. El valor del domicilio se confirma antes de pagar.` },
 ]
 
-const numeros = [
-  { valor: '+100', label: 'Clientes felices' },
-  { valor: '+1.200', label: 'Ramos entregados' },
-  { valor: '1+', label: 'Años de historia' },
-  { valor: '100%', label: 'Flores colombianas' },
+const galeria = [
+  { src: '/pasioneterna3.jpg', alt: 'Ramo redondo de rosas rojas rodeado de gipsofila, con envoltura oscura y lazo rojo' },
+  { src: '/velvetkiss1.jpg', alt: 'Caja en forma de corazón con rosas rosadas y detalles de maquillaje' },
+  { src: '/dulceprimavera1.jpg', alt: 'Ramo mixto de flores de colores en un cono de papel rosado' },
+  { src: '/rh1.jpg', alt: 'Arreglo en caja de corazón rosada con gerberas, margaritas y flores moradas' },
+  { src: '/royalprincess1.jpg', alt: 'Ramo grande de rosas y lirios rosados con listón y mariposas doradas' },
+  { src: '/ternura5.jpg', alt: 'Ramo mixto en tonos rosados con un peluche de perro blanco y negro' },
 ]
 
-useHead({ title: 'Nosotros – Regocijo Floristería' })
+useHead({
+  title: 'Nosotros – Regocijo Floristería',
+  meta: [{ name: 'description', content: 'Regocijo es una floristería de Montería que arma ramos artesanales por encargo y los entrega a domicilio.' }],
+})
 </script>
 
 <style scoped>
-/* ── Hero ────────────────────────────────── */
-.nosotros-hero {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(160deg, #ffe8ee 0%, #faf8f3 50%, #e6eedd 100%);
-}
-.nosotros-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(2.8rem, 7vw, 5rem);
-  color: #292524;
-  line-height: 1;
-  margin-bottom: 1.25rem;
-  font-weight: 400;
-}
-.nosotros-subtitle {
-  font-family: 'Jost', sans-serif;
-  font-size: 1rem;
-  color: #78716c;
-  max-width: 520px;
-  margin: 0 auto;
-  line-height: 1.8;
-}
+.center { text-align: center; display: grid; justify-items: center; }
+.about { display: grid; gap: 3.5rem; align-items: center; }
+@media (min-width: 900px) { .about { grid-template-columns: 0.9fr 1.1fr; gap: 6rem; } }
+.about-media { position: relative; max-width: 28rem; margin-inline: auto; width: 100%; }
+.about-arch { aspect-ratio: 3 / 4; box-shadow: var(--shadow-lift); background: var(--blush); }
+.about-arch img, .about-round img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.about-round { position: absolute; right: -3%; bottom: -6%; width: 42%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 7px solid var(--cream); box-shadow: var(--shadow-lift); }
+.about-title { font-size: clamp(2.8rem, 6vw, 4.6rem); margin: 0.9rem 0 1.5rem; }
+.about-text p:not(.eyebrow):not(.about-sign) { font-size: 1.1rem; line-height: 1.85; margin-bottom: 1.1rem; max-width: 36rem; }
+.about-div { width: 12rem; color: var(--rose); margin: 1.75rem 0 1rem; opacity: 0.8; }
+.about-sign { font: italic 300 2.2rem/1.1 var(--serif); color: var(--wine); }
 
-/* ── Historia ────────────────────────────── */
-.historia-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-@media (min-width: 768px) {
-  .historia-grid { grid-template-columns: 1fr 1.2fr; gap: 4rem; }
-}
+.pr { background: var(--blush); }
+.pr-title { font-size: clamp(2.5rem, 5.5vw, 4.2rem); margin: 0.9rem 0 3rem; }
+.pr-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .pr-grid { grid-template-columns: repeat(3, 1fr); } }
+.pr-card { padding: 2.25rem 2rem; background: var(--paper); border: 1px solid var(--line); border-radius: 2rem; transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out); }
+.pr-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
+.pr-ico { display: block; width: 3.5rem; height: 3.5rem; margin-bottom: 1.25rem; color: var(--rose); transition: transform 0.7s var(--ease-out); }
+.pr-card:hover .pr-ico { transform: rotate(14deg) scale(1.08); }
+.pr-h { font-size: 1.9rem; margin-bottom: 0.5rem; }
 
-.historia-img-col {}
+.gal-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 800px) { .gal-grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+.gal-item { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 1.5rem; background: var(--blush); }
+@media (min-width: 800px) { .gal-item--1, .gal-item--4 { transform: translateY(2rem); } }
+.gal-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s var(--ease-out); }
+.gal-item:hover img { transform: scale(1.07); }
+.gal-cta { margin-top: 4rem; }
 
-.historia-img-wrapper {
-  position: relative;
-  border-radius: 2rem;
-  overflow: visible;
-}
-.historia-img {
-  width: 100%;
-  aspect-ratio: 4/5;
-  object-fit: cover;
-  border-radius: 2rem;
-  box-shadow: 0 20px 60px rgba(242,84,128,0.12);
-  display: block;
-}
-.historia-img-badge {
-  position: absolute;
-  bottom: -1rem;
-  right: -1rem;
-  background: white;
-  border-radius: 1rem;
-  padding: 0.75rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 8px 30px rgba(242,84,128,0.15);
-  border: 1px solid #ffe8ee;
-}
-
-.historia-texto-col {}
-.historia-titulo {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 2.2rem;
-  color: #292524;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-}
-.historia-parrafos {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.historia-parrafos p {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.9rem;
-  color: #57534e;
-  line-height: 1.9;
-}
-.historia-parrafos strong {
-  color: #f25480;
-  font-weight: 600;
-}
-
-/* ── Fundadoras ──────────────────────────── */
-.fundadoras-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-@media (min-width: 640px) {
-  .fundadoras-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
-}
-
-.fundadora-card {
-  background: white;
-  border-radius: 2rem;
-  overflow: hidden;
-  box-shadow: 0 4px 40px rgba(242,84,128,0.07);
-  border: 1px solid #ffe8ee;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.fundadora-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 50px rgba(242,84,128,0.13);
-}
-
-.fundadora-foto-wrapper {
-  position: relative;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-}
-.fundadora-foto {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  transition: transform 0.5s;
-}
-.fundadora-card:hover .fundadora-foto { transform: scale(1.04); }
-.fundadora-foto-ring {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(242,84,128,0.15) 0%, transparent 50%);
-}
-
-.fundadora-info {
-  padding: 1.75rem;
-}
-.fundadora-nombre {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.6rem;
-  color: #292524;
-  margin-bottom: 0.2rem;
-}
-.fundadora-rol {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #f25480;
-}
-.fundadora-bio {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.85rem;
-  color: #78716c;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-}
-.fundadora-frase {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.35rem;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #fff5f7, #fdf0f3);
-  border-radius: 0.75rem;
-  border-left: 3px solid #ffc5d5;
-}
-
-/* ── Valores ─────────────────────────────── */
-.valores-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-@media (min-width: 768px) {
-  .valores-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
-.valor-card {
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  border: 1px solid #ffe8ee;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.04);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.valor-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 40px rgba(242,84,128,0.1);
-}
-.valor-emoji {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 0.75rem;
-}
-.valor-titulo {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.2rem;
-  color: #292524;
-  margin-bottom: 0.5rem;
-}
-.valor-desc {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.78rem;
-  color: #78716c;
-  line-height: 1.7;
-}
-
-/* ── Números ─────────────────────────────── */
-.numeros-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  text-align: center;
-}
-@media (min-width: 640px) {
-  .numeros-grid { grid-template-columns: repeat(4, 1fr); }
-}
-.numero-valor {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 3rem;
-  color: #ffc5d5;
-  line-height: 1;
-  margin-bottom: 0.4rem;
-  font-weight: 400;
-}
-.numero-label {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #a8a29e;
-}
-
-/* ── CTA ─────────────────────────────────── */
-.cta-nosotros {
-  background: linear-gradient(135deg, #fff5f7 0%, #fdf0f3 60%, #e6eedd 100%);
-  border-radius: 2rem;
-  padding: 4rem 2rem;
-  border: 1px solid #ffc5d5;
-}
+.end { text-align: center; padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem; border: 1px solid var(--line-strong); border-radius: 2.5rem; background: var(--paper); }
+.end-title { font-size: clamp(2.4rem, 5.5vw, 4rem); }
+.end-text { margin: 1rem auto 2rem; max-width: 28rem; }
+.end-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 </style>

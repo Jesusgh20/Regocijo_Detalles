@@ -1,175 +1,143 @@
 <template>
-  <article class="catalog-card group">
-    <div class="relative overflow-hidden" style="aspect-ratio:4/3; border-radius:1rem 1rem 0 0;">
-      <img
+  <article class="cc" :class="{ 'cc--sin-foto': !ramo.imagen_url }">
+    <div class="cc-media">
+      <RamoImagen
         :src="ramo.imagen_url"
-        :alt="ramo.nombre"
-        class="card-img"
-        loading="lazy"
+        :alt="altImagen(ramo, 0)"
+        :nombre="ramo.nombre"
+        :categoria="ramo.categoria"
+        :prioridad="prioridad"
+        class="cc-img cc-img--a"
+      />
+      <!-- Segunda foto: aparece al pasar el cursor (solo escritorio) -->
+      <RamoImagen
+        v-if="ramo.imagenes[1]"
+        :src="ramo.imagenes[1]"
+        alt=""
+        class="cc-img cc-img--b"
+        aria-hidden="true"
       />
 
-      <!-- Category badge -->
-      <div class="absolute top-3 left-3 flex gap-2">
-        <span :class="['category-badge', `cat-${ramo.categoria}`]">{{ labelCategoria }}</span>
+      <div class="cc-badges">
+        <span class="badge">{{ store.infoCategoria(ramo.categoria).singular }}</span>
+        <span v-if="ramo.insignia" class="badge badge--gold">Insignia</span>
+        <span v-else-if="ramo.destacado" class="badge badge--gold">Destacado</span>
       </div>
 
-      <!-- Insignia badge -->
-      <div v-if="ramo.insignia" class="absolute top-3 right-3">
-        <span class="category-badge" style="background:#fdf4e3;color:#b8872a;">⭐ Favorito</span>
-      </div>
-      <div v-else-if="ramo.destacado" class="absolute top-3 right-3">
-        <span class="category-badge" style="background:#fdf4e3;color:#b8872a;">Destacado</span>
-      </div>
-
-      <!-- Hover overlay -->
-      <div class="card-overlay">
-        <NuxtLink :to="`/producto/${ramo.id}`" class="btn-primary" style="font-size:0.8rem;padding:0.6rem 1.2rem;">
-          Ver detalle
-        </NuxtLink>
-      </div>
+      <!-- Acción rápida -->
+      <NuxtLink
+        v-if="tieneVariantes"
+        :to="`/producto/${ramo.slug}`"
+        class="cc-quick"
+        :aria-label="`Elegir tamaño de ${ramo.nombre}`"
+        title="Elegir tamaño"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </NuxtLink>
+      <button
+        v-else
+        type="button"
+        class="cc-quick"
+        :class="{ 'cc-quick--ok': agregado }"
+        :aria-label="agregado ? `${ramo.nombre} agregado al carrito` : `Agregar ${ramo.nombre} al carrito`"
+        :title="agregado ? 'Agregado' : 'Agregar al carrito'"
+        @click="agregar"
+      >
+        <svg v-if="!agregado" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+      </button>
     </div>
 
-    <div class="p-5">
-      <NuxtLink :to="`/producto/${ramo.id}`" class="card-title-link">
-        <h2 class="card-title">{{ ramo.nombre }}</h2>
-      </NuxtLink>
-      <p class="card-desc">{{ ramo.descripcion }}</p>
-
-      <!-- Incluye (kits) -->
-      <p v-if="ramo.incluye && ramo.incluye.length" class="card-incluye">
-        🎁 Incluye: {{ ramo.incluye.slice(0, 2).join(', ') }}{{ ramo.incluye.length > 2 ? '...' : '' }}
+    <div class="cc-body">
+      <h3 class="cc-title">
+        <NuxtLink :to="`/producto/${ramo.slug}`" class="cc-link">{{ ramo.nombre }}</NuxtLink>
+      </h3>
+      <p class="cc-desc">{{ ramo.descripcion }}</p>
+      <p class="cc-price">
+        <span v-if="ramo.precioDesde" class="cc-price-label">Desde</span>
+        {{ formatPrecio(ramo.precio) }}
       </p>
-
-      <div class="card-footer">
-        <div>
-          <p class="card-price-label">{{ tieneVariantes ? 'Desde' : 'Precio' }}</p>
-          <span class="card-price">{{ store.formatPrecio(ramo.precio) }}</span>
-        </div>
-        <div class="card-actions">
-          <button class="add-btn" title="Agregar al carrito" @click.prevent="agregarAlCarrito(ramo)">
-            <svg xmlns="http://www.w3.org/2000/svg" style="height:1rem;width:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-            </svg>
-          </button>
-          <NuxtLink :to="`/producto/${ramo.id}`" class="ver-btn">Ver más</NuxtLink>
-        </div>
-      </div>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
-import type { Ramo } from '~/stores/productos'
-import { useProductosStore } from '~/stores/productos'
+import { altImagen, useProductosStore, type Ramo } from '~/stores/productos'
+
+const props = defineProps<{ ramo: Ramo; prioridad?: boolean }>()
 
 const store = useProductosStore()
-const props = defineProps<{ ramo: Ramo }>()
+const { mostrar } = useToast()
+const { abrir } = useCarritoUI()
 
-const tieneVariantes = computed(() =>
-  props.ramo.variantes_precio && props.ramo.variantes_precio.length > 0
-)
+const tieneVariantes = computed(() => props.ramo.tamanos.length > 1)
+const agregado = ref(false)
+let t: ReturnType<typeof setTimeout>
 
-const CATEGORIA_LABELS: Record<string, string> = {
-  rosas: 'Rosas 🌹',
-  girasoles: 'Girasoles 🌻',
-  lirios: 'Lirios 🌸',
-  mixtos: 'Mixto 💐',
+function agregar() {
+  store.agregarAlCarrito(props.ramo)
+  agregado.value = true
+  clearTimeout(t)
+  t = setTimeout(() => { agregado.value = false }, 1600)
+  mostrar(`${props.ramo.nombre} se agregó al carrito`, { label: 'Ver carrito', fn: abrir })
 }
-
-const labelCategoria = computed(() =>
-  CATEGORIA_LABELS[props.ramo.categoria] ?? props.ramo.categoria
-)
-
-function agregarAlCarrito(r: Ramo) {
-  store.agregarAlCarrito(r)
-  // Abre el drawer del carrito
-  const carritoAbierto = useState('carritoAbierto', () => false)
-  carritoAbierto.value = true
-}
+onBeforeUnmount(() => clearTimeout(t))
 </script>
 
 <style scoped>
-.catalog-card {
-  border-radius: 1rem;
+.cc {
+  position: relative;
+  display: flex; flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
   overflow: hidden;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-  transition: transform 0.3s, box-shadow 0.3s;
-  animation: cardIn 0.4s ease both;
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out), border-color 0.3s;
 }
-.catalog-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(242,84,128,0.13);
-}
-@keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.cc:hover, .cc:focus-within { transform: translateY(-6px); box-shadow: var(--shadow-lift); border-color: var(--blush-deep); }
 
-.card-img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.5s ease;
-}
-.catalog-card:hover .card-img { transform: scale(1.08); }
+.cc-media { position: relative; aspect-ratio: 4 / 5; background: var(--blush); overflow: hidden; }
+.cc-img { position: absolute; inset: 0; }
+.cc-img--a :deep(.ri-img) { transition: transform 1.2s var(--ease-out), opacity 0.7s var(--ease-out); }
+.cc:hover .cc-img--a :deep(.ri-img) { transform: scale(1.06); }
+.cc-img--b { opacity: 0; transition: opacity 0.6s var(--ease-out); }
+@media (hover: hover) { .cc:hover .cc-img--b { opacity: 1; } }
 
-.card-overlay {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0;
-  background: rgba(242,84,128,0.07);
-  backdrop-filter: blur(2px);
-  transition: opacity 0.3s;
-}
-.catalog-card:hover .card-overlay { opacity: 1; }
+.cc-badges { position: absolute; top: 0.9rem; left: 0.9rem; right: 0.9rem; display: flex; gap: 0.4rem; flex-wrap: wrap; z-index: 2; pointer-events: none; }
+.badge--gold { background: var(--ink); color: var(--gold-soft); }
 
-/* Category badges */
-.category-badge {
-  display: inline-block; padding: 0.22rem 0.65rem;
-  border-radius: 9999px; font-family: 'Jost', sans-serif;
-  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
-  text-transform: uppercase; backdrop-filter: blur(8px);
+.cc-quick {
+  position: absolute; right: 0.9rem; bottom: 0.9rem; z-index: 4;
+  display: grid; place-items: center;
+  width: 3rem; height: 3rem; border-radius: 50%;
+  border: 0; cursor: pointer; text-decoration: none;
+  background: var(--paper); color: var(--ink);
+  box-shadow: 0 8px 24px -8px rgba(42, 26, 31, 0.5);
+  transition: background 0.3s, color 0.3s, transform 0.35s var(--ease-out);
 }
-.cat-rosas     { background: rgba(255,197,213,0.85); color: #a8264f; }
-.cat-girasoles { background: rgba(255,236,153,0.9);  color: #92670a; }
-.cat-lirios    { background: rgba(213,197,255,0.85); color: #5b3fa8; }
-.cat-mixtos    { background: rgba(205,220,188,0.85); color: #3a6e2a; }
+.cc-quick:hover { background: var(--wine); color: #fff; transform: scale(1.1) rotate(90deg); }
+.cc-quick:active { transform: scale(0.92); }
+.cc-quick--ok, .cc-quick--ok:hover { background: var(--sage); color: #fff; transform: none; }
+a.cc-quick:hover { transform: scale(1.1); }
 
-/* Card text */
-.card-title-link { text-decoration: none; }
-.card-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.2rem; color: #292524;
-  margin-bottom: 0.3rem; transition: color 0.15s; line-height: 1.2;
+.cc-body { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.25rem 1.4rem 1.5rem; flex: 1; }
+.cc-title { font-size: 1.6rem; line-height: 1.1; }
+/* Enlace extendido: toda la tarjeta es clicable, pero el botón rápido queda por encima */
+.cc-link { color: var(--ink); text-decoration: none; transition: color 0.25s; }
+.cc-link::after { content: ''; position: absolute; inset: 0; z-index: 3; }
+.cc:hover .cc-link { color: var(--wine); }
+.cc-link:focus-visible { outline: none; }
+.cc:has(.cc-link:focus-visible) { outline: 3px solid var(--wine); outline-offset: 3px; }
+.cc-desc {
+  font-size: 0.92rem; line-height: 1.6; color: var(--body);
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.card-title-link:hover .card-title { color: #f25480; }
-.card-desc {
-  font-family: 'Jost', sans-serif; font-size: 0.78rem; color: #78716c;
-  line-height: 1.6; margin-bottom: 0.6rem;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden;
-}
-.card-incluye {
-  font-family: 'Jost', sans-serif; font-size: 0.7rem; color: #a8a29e;
-  margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis;
-}
-.card-footer { display: flex; align-items: flex-end; justify-content: space-between; }
-.card-price-label {
-  font-family: 'Jost', sans-serif; font-size: 0.65rem; color: #a8a29e;
-  text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.1rem;
-}
-.card-price { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; color: #d43868; font-weight: 500; }
-.card-actions { display: flex; align-items: center; gap: 0.5rem; }
-.add-btn {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: #fff5f7; border: 1px solid #ffc5d5;
-  color: #f25480; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-}
-.add-btn:hover { background: #f25480; color: white; border-color: #f25480; transform: scale(1.1); }
-.ver-btn {
-  font-family: 'Jost', sans-serif; font-size: 0.78rem;
-  font-weight: 500; color: #f25480; text-decoration: none;
-  transition: color 0.15s; white-space: nowrap;
-}
-.ver-btn:hover { color: #d43868; }
+.cc-price { margin-top: auto; padding-top: 0.5rem; font: 500 1.55rem var(--serif); color: var(--wine); }
+.cc-price-label { font: 500 0.7rem var(--sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-right: 0.35rem; }
 </style>
