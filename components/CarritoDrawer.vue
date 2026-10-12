@@ -1,375 +1,311 @@
-﻿<template>
+<template>
   <Teleport to="body">
-    <!-- Backdrop -->
-    <Transition name="backdrop-fade">
-      <div v-if="modelValue" class="carrito-backdrop" @click="$emit('update:modelValue', false)" />
+    <Transition name="cd-backdrop">
+      <div v-if="abierto" class="cd-backdrop" aria-hidden="true" @click="cerrar" />
     </Transition>
 
-    <!-- Drawer -->
-    <Transition name="drawer-slide">
-      <aside v-if="modelValue" class="carrito-drawer" aria-label="Carrito de compras">
-
-        <!-- ── Header ── -->
-        <div class="drawer-header">
+    <Transition name="cd-slide">
+      <div
+        v-if="abierto"
+        ref="panel"
+        class="cd"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cd-titulo"
+      >
+        <!-- Cabecera -->
+        <div class="cd-head">
           <div>
-            <h2 class="drawer-title">Tu carrito 🛒</h2>
-            <p class="drawer-subtitle">{{ store.cantidadCarrito }} {{ store.cantidadCarrito === 1 ? 'ramo' : 'ramos' }} seleccionados</p>
+            <h2 id="cd-titulo" class="cd-title">Tu carrito</h2>
+            <p class="cd-sub" aria-live="polite">
+              {{ store.cantidadCarrito }} {{ store.cantidadCarrito === 1 ? 'ramo' : 'ramos' }}
+            </p>
           </div>
-          <button class="drawer-close" @click="$emit('update:modelValue', false)" aria-label="Cerrar carrito">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+          <button type="button" class="icon-btn" data-autofocus aria-label="Cerrar carrito" @click="cerrar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </div>
 
-        <!-- ── Vacío ── -->
-        <div v-if="store.carritoItems.length === 0" class="drawer-empty">
-          <span class="drawer-empty-icon">🌿</span>
-          <p class="drawer-empty-title">Tu carrito está vacío</p>
-          <p class="drawer-empty-sub">Explora nuestro catálogo y agrega tus ramos favoritos</p>
-          <button class="drawer-empty-btn" @click="$emit('update:modelValue', false)">
-            Ver catálogo
-          </button>
+        <!-- Estado vacío -->
+        <div v-if="store.carritoItems.length === 0" class="cd-empty">
+          <Ornament variant="bloom" class="cd-empty-orn" />
+          <h3 class="cd-empty-title">Tu carrito está vacío</h3>
+          <p class="cd-empty-text">Cuando encuentres un ramo que te enamore, agrégalo y lo agendamos por WhatsApp.</p>
+          <NuxtLink to="/catalogo" class="btn btn--wine" @click="cerrar">
+            Explorar el catálogo <span class="btn-arrow" aria-hidden="true">→</span>
+          </NuxtLink>
         </div>
 
-        <!-- ── Items + Form ── -->
-        <div v-else class="drawer-body">
-
-          <!-- Lista de items -->
-          <div class="items-list">
-            <TransitionGroup name="item-list" tag="div">
-              <div v-for="item in store.carritoItems" :key="`${item.ramo.id}-${item.tamano.value}`" class="cart-item">
-                <img :src="item.ramo.imagen_url" :alt="item.ramo.nombre" class="item-img" />
-                <div class="item-info">
-                  <p class="item-nombre">{{ item.ramo.nombre }}</p>
-                  <p class="item-tamano">{{ item.tamano.label }}</p>
-                  <p class="item-precio">{{ store.formatPrecio(item.tamano.precio) }} c/u</p>
+        <!-- Contenido -->
+        <div v-else class="cd-body">
+          <ul class="cd-items">
+            <TransitionGroup name="cd-item">
+              <li v-for="item in store.carritoItems" :key="`${item.ramo.id}-${item.tamano.value}`" class="cd-item">
+                <NuxtLink :to="`/producto/${item.ramo.slug}`" class="cd-thumb" tabindex="-1" aria-hidden="true" @click="cerrar">
+                  <RamoImagen :src="item.ramo.imagen_url" alt="" :categoria="item.ramo.categoria" compacto />
+                </NuxtLink>
+                <div class="cd-info">
+                  <NuxtLink :to="`/producto/${item.ramo.slug}`" class="cd-name" @click="cerrar">{{ item.ramo.nombre }}</NuxtLink>
+                  <p class="cd-size">{{ item.tamano.label }}</p>
+                  <p class="cd-price">{{ formatPrecio(item.tamano.precio * item.cantidad) }}</p>
                 </div>
-                <div class="item-controls">
-                  <button class="qty-btn" @click="store.quitarDelCarrito(item.ramo.id, item.tamano.value)" aria-label="Reducir">−</button>
-                  <span class="qty-num">{{ item.cantidad }}</span>
-                  <button class="qty-btn" @click="store.agregarAlCarrito(item.ramo, item.tamano)" aria-label="Aumentar">+</button>
-                  <button class="remove-btn" @click="eliminarItem(item.ramo.id, item.tamano.value)" aria-label="Eliminar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                  </button>
+                <div class="cd-qty" role="group" :aria-label="`Cantidad de ${item.ramo.nombre}`">
+                  <button type="button" class="cd-qbtn" :aria-label="`Quitar una unidad de ${item.ramo.nombre}`" @click="store.quitarDelCarrito(item.ramo.id, item.tamano.value)">−</button>
+                  <span class="cd-qnum" aria-live="polite">{{ item.cantidad }}</span>
+                  <button type="button" class="cd-qbtn" :aria-label="`Agregar una unidad de ${item.ramo.nombre}`" @click="store.agregarAlCarrito(item.ramo, item.tamano)">+</button>
                 </div>
-              </div>
+                <button type="button" class="cd-remove" :aria-label="`Eliminar ${item.ramo.nombre} del carrito`" @click="store.eliminarDelCarrito(item.ramo.id, item.tamano.value)">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3" /></svg>
+                </button>
+              </li>
             </TransitionGroup>
+          </ul>
+
+          <div class="cd-total">
+            <span>Subtotal estimado</span>
+            <strong>{{ formatPrecio(store.totalCarrito) }}</strong>
           </div>
+          <p class="cd-note">
+            El domicilio y los extras (por ejemplo, el peluche del ramo Ternura) se confirman contigo por WhatsApp antes de pagar.
+          </p>
 
-          <!-- Subtotal -->
-          <div class="subtotal-row">
-            <span class="subtotal-label">Subtotal estimado</span>
-            <span class="subtotal-precio">{{ store.formatPrecio(store.totalCarrito) }}</span>
-          </div>
-          <p class="subtotal-nota">* El domicilio se calcula por separado según tu ubicación en Montería.</p>
+          <!-- Formulario -->
+          <form class="cd-form" novalidate aria-labelledby="cd-form-titulo" @submit.prevent="enviar">
+            <h3 id="cd-form-titulo" class="cd-form-title">Datos para agendar la entrega</h3>
+            <p class="cd-form-sub">Solo pedimos lo necesario para entregar tu pedido en {{ NEGOCIO.ciudad }}.</p>
 
-          <div class="drawer-divider" />
+            <div v-if="resumenErrores.length" ref="resumen" class="cd-errors" role="alert" tabindex="-1">
+              <p><strong>Revisa estos campos:</strong></p>
+              <ul>
+                <li v-for="e in resumenErrores" :key="e.campo"><a :href="`#c-${e.campo}`" @click.prevent="enfocar(e.campo)">{{ e.mensaje }}</a></li>
+              </ul>
+            </div>
 
-          <!-- Formulario de datos -->
-          <div class="form-section">
-            <h3 class="form-title">📝 Tus datos para agendar</h3>
-            <p class="form-sub">Completa para que podamos preparar tu pedido correctamente.</p>
+            <div class="field">
+              <label class="field-label" for="c-nombre">Tu nombre <span aria-hidden="true">*</span></label>
+              <input id="c-nombre" v-model.trim="form.nombre" class="input" type="text" autocomplete="name" required maxlength="80"
+                :aria-invalid="!!errores.nombre" :aria-describedby="errores.nombre ? 'e-nombre' : undefined" placeholder="¿Cómo te llamas?" />
+              <p v-if="errores.nombre" id="e-nombre" class="field-error">{{ errores.nombre }}</p>
+            </div>
 
-            <div class="form-grid">
-              <div class="form-field">
-                <label class="form-label" for="c-nombre">Nombre completo *</label>
-                <input id="c-nombre" v-model="form.nombre" type="text" class="form-input" placeholder="¿Cómo te llamas?" />
-              </div>
-              <div class="form-field">
-                <label class="form-label" for="c-telefono">WhatsApp / Teléfono *</label>
-                <input id="c-telefono" v-model="form.telefono" type="tel" class="form-input" placeholder="Ej: 3001234567" />
-              </div>
-              <div class="form-field form-field--full">
-                <label class="form-label" for="c-ocasion">Ocasión</label>
-                <select id="c-ocasion" v-model="form.ocasion" class="form-input form-select">
-                  <option value="">Selecciona una ocasión...</option>
-                  <option>Cumpleaños</option>
-                  <option>Aniversario</option>
-                  <option>San Valentín</option>
-                  <option>Día de la Madre</option>
-                  <option>Amor y Amistad</option>
-                  <option>Graduación</option>
-                  <option>Sin ocasión especial</option>
-                  <option>Otra</option>
+            <div class="field">
+              <label class="field-label" for="c-fecha">Fecha de entrega <span aria-hidden="true">*</span></label>
+              <input id="c-fecha" v-model="form.fecha" class="input" type="date" required :min="hoy"
+                :aria-invalid="!!errores.fecha" :aria-describedby="errores.fecha ? 'e-fecha c-fecha-h' : 'c-fecha-h'" />
+              <p id="c-fecha-h" class="field-hint">Agenda con 1 a 2 días de anticipación; el mismo día depende de la disponibilidad.</p>
+              <p v-if="errores.fecha" id="e-fecha" class="field-error">{{ errores.fecha }}</p>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="c-direccion">Barrio y dirección <span aria-hidden="true">*</span></label>
+              <input id="c-direccion" v-model.trim="form.direccion" class="input" type="text" autocomplete="street-address" required maxlength="140"
+                :aria-invalid="!!errores.direccion" :aria-describedby="errores.direccion ? 'e-direccion' : undefined" placeholder="Barrio y dirección en Montería" />
+              <p v-if="errores.direccion" id="e-direccion" class="field-error">{{ errores.direccion }}</p>
+            </div>
+
+            <div class="cd-row">
+              <div class="field">
+                <label class="field-label" for="c-ocasion">Ocasión <span class="opt">(opcional)</span></label>
+                <select id="c-ocasion" v-model="form.ocasion" class="input">
+                  <option value="">Sin especificar</option>
+                  <option v-for="o in OCASIONES" :key="o" :value="o">{{ o }}</option>
                 </select>
               </div>
-              <div class="form-field form-field--full">
-                <label class="form-label" for="c-fecha">Fecha de entrega deseada</label>
-                <input id="c-fecha" v-model="form.fecha" type="date" class="form-input" :min="fechaMinima" />
-              </div>
-              <div class="form-field form-field--full">
-                <label class="form-label" for="c-direccion">Dirección de entrega</label>
-                <input id="c-direccion" v-model="form.direccion" type="text" class="form-input" placeholder="Barrio / dirección en Montería" />
-              </div>
-              <div class="form-field form-field--full">
-                <label class="form-label" for="c-nota">Nota adicional / Dedicatoria</label>
-                <textarea id="c-nota" v-model="form.nota" class="form-input form-textarea" rows="2" placeholder="Mensaje especial, color preferido, instrucciones..."></textarea>
+              <div class="field">
+                <label class="field-label" for="c-tel">Teléfono de quien recibe <span class="opt">(opcional)</span></label>
+                <input id="c-tel" v-model.trim="form.telefono" class="input" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="300 000 0000" />
               </div>
             </div>
 
-            <!-- Error si campos requeridos vacíos -->
-            <p v-if="enviado && !formValido" class="form-error">
-              ⚠️ Por favor ingresa tu nombre y teléfono antes de continuar.
-            </p>
-          </div>
+            <div class="field">
+              <label class="field-label" for="c-nota">Dedicatoria o nota <span class="opt">(opcional)</span></label>
+              <textarea id="c-nota" v-model="form.nota" class="input" rows="3" maxlength="300" placeholder="Mensaje para la tarjeta, color preferido, indicaciones de entrega…" />
+              <p class="field-hint">{{ form.nota.length }} / 300</p>
+            </div>
 
-          <!-- CTA WhatsApp -->
-          <div class="cta-section">
-            <button class="cta-wa-btn" @click="agendarWhatsApp" :class="{ 'cta-wa-btn--loading': false }">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-              Agendar mi Ramo por WhatsApp
+            <div class="field">
+              <label class="check">
+                <input id="c-consent" v-model="form.consentimiento" type="checkbox" required
+                  :aria-invalid="!!errores.consentimiento" :aria-describedby="errores.consentimiento ? 'e-consent' : undefined" />
+                <span>
+                  Autorizo a {{ NEGOCIO.nombre }} a usar estos datos para gestionar y entregar mi pedido, conforme a la
+                  <NuxtLink to="/privacidad" class="link-inline" @click="cerrar">Política de Privacidad</NuxtLink>
+                  y los <NuxtLink to="/terminos" class="link-inline" @click="cerrar">Términos y Condiciones</NuxtLink>.
+                  <span aria-hidden="true">*</span>
+                </span>
+              </label>
+              <p v-if="errores.consentimiento" id="e-consent" class="field-error">{{ errores.consentimiento }}</p>
+            </div>
+
+            <p class="cd-legal">
+              Al pulsar el botón se abrirá WhatsApp con tu pedido ya escrito. <strong>No enviamos nada hasta que tú lo envíes</strong>
+              desde WhatsApp, y esta página no guarda lo que escribes aquí.
+            </p>
+
+            <button type="submit" class="btn btn--wa btn--block" :class="{ 'btn--loading': abriendo }" :aria-busy="abriendo">
+              <span v-if="abriendo" class="spinner" aria-hidden="true" />
+              <IconWhatsApp v-else width="20" height="20" />
+              {{ abriendo ? 'Abriendo WhatsApp…' : 'Enviar pedido por WhatsApp' }}
             </button>
-            <p class="cta-disclaimer">
-              Al continuar, aceptas nuestras <button class="cta-link" @click="$emit('open-policy', 'terms')">políticas de servicio</button>
-            </p>
-          </div>
 
+            <p v-if="enviado" class="cd-ok" role="status">
+              Listo. Revisa WhatsApp y pulsa «enviar» para que recibamos tu pedido.
+              <button type="button" class="link-inline cd-clear" @click="vaciar">Vaciar carrito</button>
+            </p>
+          </form>
         </div>
-      </aside>
+      </div>
     </Transition>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useProductosStore } from "~/stores/productos";
+import { NEGOCIO } from '~/data/negocio'
+import { useProductosStore } from '~/stores/productos'
 
-defineProps<{ modelValue: boolean }>();
-defineEmits(["update:modelValue", "open-policy"]);
+const store = useProductosStore()
+const { abierto, cerrar } = useCarritoUI()
+const panel = ref<HTMLElement | null>(null)
+const resumen = ref<HTMLElement | null>(null)
+useFocusTrap(abierto, panel, cerrar)
 
-const store = useProductosStore();
+const route = useRoute()
+watch(() => route.fullPath, cerrar)
 
-// Número de WhatsApp del negocio — CAMBIA ESTE POR EL REAL
-const WA_NUMBER = "573004567890";
+const OCASIONES = ['Cumpleaños', 'Aniversario', 'San Valentín', 'Día de la Madre', 'Amor y Amistad', 'Graduación', 'Otra']
 
-const form = ref({
-  nombre: "",
-  telefono: "",
-  ocasion: "",
-  fecha: "",
-  direccion: "",
-  nota: "",
-});
+const hoy = computed(() => fechaLocalISO(0))
+const form = reactive({ nombre: '', fecha: '', direccion: '', ocasion: '', telefono: '', nota: '', consentimiento: false })
+const errores = reactive({ nombre: '', fecha: '', direccion: '', consentimiento: '' })
+const abriendo = ref(false)
+const enviado = ref(false)
 
-const enviado = ref(false);
+const resumenErrores = computed(() =>
+  (Object.keys(errores) as (keyof typeof errores)[])
+    .filter((k) => errores[k])
+    .map((k) => ({ campo: k === 'consentimiento' ? 'consent' : k, mensaje: errores[k] })),
+)
 
-const formValido = computed(() => form.value.nombre.trim() && form.value.telefono.trim());
-
-// Fecha mínima: mañana
-const fechaMinima = computed(() => {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
-});
-
-function eliminarItem(ramoId: number, tamanoValue: string) {
-  // Elimina completamente el item sin importar la cantidad
-  const idx = store.carritoItems.findIndex(
-    (i) => i.ramo.id === ramoId && i.tamano.value === tamanoValue
-  );
-  if (idx !== -1) store.carritoItems.splice(idx, 1);
+function validar(): boolean {
+  errores.nombre = form.nombre.length < 2 ? 'Escribe tu nombre.' : ''
+  errores.fecha = !form.fecha
+    ? 'Elige la fecha de entrega.'
+    : form.fecha < hoy.value ? 'La fecha de entrega no puede ser anterior a hoy.' : ''
+  errores.direccion = form.direccion.length < 5 ? 'Escribe el barrio y la dirección de entrega.' : ''
+  errores.consentimiento = form.consentimiento ? '' : 'Debes autorizar el uso de tus datos para poder enviar el pedido.'
+  return !resumenErrores.value.length
 }
 
-function agendarWhatsApp() {
-  enviado.value = true;
-  if (!formValido.value) return;
-
-  // Construir el mensaje
-  const lineas: string[] = [];
-  lineas.push("🌸 *PEDIDO — Regocijo Floristería*");
-  lineas.push("─────────────────────");
-  lineas.push("");
-
-  // Items
-  lineas.push("🛒 *Ramos seleccionados:*");
-  store.carritoItems.forEach((item) => {
-    lineas.push(`• *${item.ramo.nombre}* — ${item.tamano.label} × ${item.cantidad} = ${store.formatPrecio(item.tamano.precio * item.cantidad)}`);
-  });
-  lineas.push(`\n💰 *Subtotal: ${store.formatPrecio(store.totalCarrito)}*`);
-  lineas.push("(+ domicilio según ubicación)");
-  lineas.push("");
-  lineas.push("─────────────────────");
-
-  // Datos del cliente
-  lineas.push("👤 *Datos del cliente:*");
-  lineas.push(`• Nombre: ${form.value.nombre}`);
-  lineas.push(`• Teléfono: ${form.value.telefono}`);
-  if (form.value.ocasion) lineas.push(`• Ocasión: ${form.value.ocasion}`);
-  if (form.value.fecha) lineas.push(`• Fecha deseada: ${form.value.fecha}`);
-  if (form.value.direccion) lineas.push(`• Dirección: ${form.value.direccion}`);
-  if (form.value.nota) lineas.push(`• Nota/Dedicatoria: ${form.value.nota}`);
-  lineas.push("");
-  lineas.push("─────────────────────");
-  lineas.push("¡Quiero confirmar mi pedido! 🌺");
-
-  const mensaje = encodeURIComponent(lineas.join("\n"));
-  const url = `https://wa.me/${WA_NUMBER}?text=${mensaje}`;
-  window.open(url, "_blank", "noopener,noreferrer");
+async function enfocar(campo: string) {
+  await nextTick()
+  document.getElementById(`c-${campo}`)?.focus()
 }
+
+function construirMensaje(): string {
+  const l: string[] = []
+  l.push('*PEDIDO – Regocijo Floristería*', '')
+  l.push('*Ramos:*')
+  for (const i of store.carritoItems) {
+    l.push(`• ${i.ramo.nombre} – ${i.tamano.label} × ${i.cantidad} = ${formatPrecio(i.tamano.precio * i.cantidad)}`)
+  }
+  l.push('', `*Subtotal estimado:* ${formatPrecio(store.totalCarrito)} (domicilio y extras por confirmar)`, '')
+  l.push('*Datos de entrega:*')
+  l.push(`• Nombre: ${form.nombre}`)
+  l.push(`• Fecha: ${fechaLarga(form.fecha)}`)
+  l.push(`• Dirección: ${form.direccion}`)
+  if (form.ocasion) l.push(`• Ocasión: ${form.ocasion}`)
+  if (form.telefono) l.push(`• Teléfono de quien recibe: ${form.telefono}`)
+  if (form.nota) l.push(`• Nota: ${form.nota}`)
+  l.push('', 'Autorizo el tratamiento de mis datos para gestionar este pedido.')
+  return l.join('\n')
+}
+
+let timer: ReturnType<typeof setTimeout>
+async function enviar() {
+  enviado.value = false
+  if (!validar()) {
+    await nextTick()
+    resumen.value?.focus()
+    return
+  }
+  // window.open debe ejecutarse dentro del gesto del usuario (si no, los navegadores lo bloquean)
+  window.open(whatsappUrl(construirMensaje()), '_blank', 'noopener,noreferrer')
+  abriendo.value = true
+  clearTimeout(timer)
+  timer = setTimeout(() => { abriendo.value = false; enviado.value = true }, 1400)
+}
+
+function vaciar() {
+  store.vaciarCarrito()
+  Object.assign(form, { nombre: '', fecha: '', direccion: '', ocasion: '', telefono: '', nota: '', consentimiento: false })
+  enviado.value = false
+}
+onBeforeUnmount(() => clearTimeout(timer))
 </script>
 
 <style scoped>
-/* ── Backdrop ── */
-.carrito-backdrop {
-  position: fixed; inset: 0; z-index: 9990;
-  background: rgba(12,8,6,0.5);
-  backdrop-filter: blur(4px);
-}
-.backdrop-fade-enter-active, .backdrop-fade-leave-active { transition: opacity 0.3s; }
-.backdrop-fade-enter-from, .backdrop-fade-leave-to { opacity: 0; }
+.cd-backdrop { position: fixed; inset: 0; z-index: 9990; background: rgba(42, 26, 31, 0.55); backdrop-filter: blur(5px); }
+.cd-backdrop-enter-active, .cd-backdrop-leave-active { transition: opacity 0.4s; }
+.cd-backdrop-enter-from, .cd-backdrop-leave-to { opacity: 0; }
 
-/* ── Drawer ── */
-.carrito-drawer {
-  position: fixed; top: 0; right: 0; bottom: 0;
-  width: min(460px, 100vw);
-  z-index: 9995;
-  background: #fffbf8;
-  box-shadow: -8px 0 48px rgba(0,0,0,0.18);
+.cd {
+  position: fixed; z-index: 9995; top: 0; right: 0; bottom: 0;
+  width: min(30rem, 100vw);
   display: flex; flex-direction: column;
-  overflow: hidden;
+  background: var(--cream); color: var(--body);
+  box-shadow: -20px 0 60px -20px rgba(42, 26, 31, 0.5);
 }
-.drawer-slide-enter-active, .drawer-slide-leave-active { transition: transform 0.35s cubic-bezier(0.32,0,0.15,1); }
-.drawer-slide-enter-from, .drawer-slide-leave-to { transform: translateX(100%); }
+.cd-slide-enter-active, .cd-slide-leave-active { transition: transform 0.55s var(--ease-out); }
+.cd-slide-enter-from, .cd-slide-leave-to { transform: translateX(100%); }
 
-/* ── Header ── */
-.drawer-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1.4rem 1.5rem 1.1rem;
-  background: linear-gradient(135deg, #fff0f4, #fdf6f0);
-  border-bottom: 1px solid rgba(242,84,128,0.12);
-  flex-shrink: 0;
-}
-.drawer-title { font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.5rem; color: #292524; line-height: 1; }
-.drawer-subtitle { font-family: "Jost", sans-serif; font-size: 0.72rem; color: #a8a29e; margin-top: 2px; letter-spacing: 0.05em; }
-.drawer-close {
-  background: rgba(242,84,128,0.08); border: none; border-radius: 50%;
-  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: #78716c; transition: all 0.2s;
-}
-.drawer-close:hover { background: rgba(242,84,128,0.18); color: #f25480; }
+.cd-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.4rem 1.5rem 1.1rem; border-bottom: 1px solid var(--line); background: var(--blush); }
+.cd-title { font-size: 2rem; }
+.cd-sub { font-size: 0.82rem; color: var(--muted); letter-spacing: 0.06em; }
 
-/* ── Empty ── */
-.drawer-empty {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 2rem; text-align: center; gap: 0.5rem;
-}
-.drawer-empty-icon { font-size: 3.5rem; }
-.drawer-empty-title { font-family: "Cormorant Garamond", serif; font-size: 1.5rem; color: #292524; }
-.drawer-empty-sub { font-family: "Jost", sans-serif; font-size: 0.82rem; color: #a8a29e; margin-bottom: 0.5rem; }
-.drawer-empty-btn {
-  margin-top: 0.75rem;
-  padding: 0.6rem 1.4rem;
-  background: linear-gradient(135deg, #f25480, #e8a0b0);
-  color: white; border: none; border-radius: 2rem;
-  font-family: "Jost", sans-serif; font-size: 0.85rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-}
-.drawer-empty-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(242,84,128,0.3); }
+/* Vacío */
+.cd-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem; padding: 2rem; text-align: center; }
+.cd-empty-orn { width: 6.5rem; color: var(--rose); opacity: 0.55; margin-bottom: 0.5rem; }
+.cd-empty-title { font-size: 2rem; }
+.cd-empty-text { max-width: 20rem; color: var(--body); margin-bottom: 0.75rem; }
 
-/* ── Scrollable body ── */
-.drawer-body {
-  flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem 1.5rem;
-  scrollbar-width: thin; scrollbar-color: rgba(242,84,128,0.3) transparent;
-  display: flex; flex-direction: column; gap: 0;
-}
-.drawer-body::-webkit-scrollbar { width: 4px; }
-.drawer-body::-webkit-scrollbar-thumb { background: rgba(242,84,128,0.3); border-radius: 10px; }
+/* Cuerpo */
+.cd-body { flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem 2rem; scrollbar-width: thin; scrollbar-color: var(--blush-deep) transparent; }
+.cd-items { list-style: none; padding: 0; margin: 0 0 1.25rem; display: grid; gap: 0.75rem; }
+.cd-item { display: grid; grid-template-columns: 4.5rem 1fr auto; grid-template-areas: 'thumb info remove' 'thumb qty qty'; gap: 0.35rem 0.9rem; align-items: center; padding: 0.8rem; background: var(--paper); border: 1px solid var(--line); border-radius: 1.1rem; transition: box-shadow 0.3s, border-color 0.3s; }
+.cd-item:hover { box-shadow: var(--shadow-soft); border-color: var(--blush-deep); }
+.cd-thumb { grid-area: thumb; display: block; width: 4.5rem; height: 5.6rem; border-radius: 0.8rem; overflow: hidden; }
+.cd-info { grid-area: info; min-width: 0; }
+.cd-name { display: block; font: 500 1.2rem/1.15 var(--serif); color: var(--ink); text-decoration: none; transition: color 0.2s; }
+.cd-name:hover { color: var(--wine); }
+.cd-size { font-size: 0.82rem; color: var(--muted); line-height: 1.35; }
+.cd-price { font: 500 1.15rem var(--serif); color: var(--wine); margin-top: 0.15rem; }
+.cd-qty { grid-area: qty; display: inline-flex; align-items: center; width: fit-content; border: 1.5px solid var(--line-strong); border-radius: 9999px; }
+.cd-qbtn { width: 2.5rem; height: 2.5rem; border: 0; background: transparent; border-radius: 50%; color: var(--ink); font-size: 1.2rem; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.cd-qbtn:hover { background: var(--blush); color: var(--wine); }
+.cd-qbtn:active { transform: scale(0.9); }
+.cd-qnum { min-width: 1.8rem; text-align: center; font-weight: 500; color: var(--ink); }
+.cd-remove { grid-area: remove; align-self: start; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border: 0; background: transparent; color: var(--muted); border-radius: 50%; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.cd-remove:hover { background: #fdecea; color: var(--danger); }
 
-/* ── Items ── */
-.items-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
-.cart-item {
-  display: flex; align-items: center; gap: 0.85rem;
-  padding: 0.85rem; border-radius: 1rem;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(242,84,128,0.1);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-  transition: box-shadow 0.2s;
-}
-.cart-item:hover { box-shadow: 0 4px 16px rgba(242,84,128,0.1); }
-.item-img { width: 60px; height: 60px; border-radius: 0.6rem; object-fit: cover; flex-shrink: 0; }
-.item-info { flex: 1; min-width: 0; }
-.item-nombre { font-family: "Cormorant Garamond", serif; font-size: 1rem; color: #292524; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.item-tamano { font-family: "Jost", sans-serif; font-size: 0.7rem; color: #a8a29e; margin-top: 1px; }
-.item-precio { font-family: "Jost", sans-serif; font-size: 0.78rem; font-weight: 600; color: #f25480; margin-top: 2px; }
-.item-controls { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; }
-.qty-btn {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: #fff5f7; border: 1px solid #ffc5d5; color: #f25480;
-  font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; font-weight: 600; line-height: 1;
-}
-.qty-btn:hover { background: #f25480; color: white; border-color: #f25480; }
-.qty-num { font-family: "Jost", sans-serif; font-size: 0.9rem; font-weight: 600; color: #292524; min-width: 18px; text-align: center; }
-.remove-btn {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: none; border: 1px solid #e7e5e4; color: #a8a29e;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; margin-left: 4px;
-}
-.remove-btn:hover { background: #fee2e2; border-color: #fca5a5; color: #dc2626; }
+.cd-item-enter-active, .cd-item-leave-active { transition: all 0.35s var(--ease-out); }
+.cd-item-enter-from, .cd-item-leave-to { opacity: 0; transform: translateX(1.5rem); }
 
-/* Items transition */
-.item-list-enter-active, .item-list-leave-active { transition: all 0.25s ease; }
-.item-list-enter-from { opacity: 0; transform: translateX(20px); }
-.item-list-leave-to { opacity: 0; transform: translateX(20px); height: 0; margin: 0; padding: 0; }
+.cd-total { display: flex; justify-content: space-between; align-items: baseline; padding: 1rem 1.1rem; background: var(--blush); border-radius: 1rem; }
+.cd-total span { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--body); }
+.cd-total strong { font: 500 1.9rem var(--serif); color: var(--wine-deep); }
+.cd-note { margin: 0.6rem 0 1.5rem; font-size: 0.85rem; color: var(--muted); }
 
-/* ── Subtotal ── */
-.subtotal-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.85rem 1rem;
-  background: linear-gradient(135deg, #fff0f4, #fdf6f0);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(242,84,128,0.12);
-  margin-bottom: 0.4rem;
-}
-.subtotal-label { font-family: "Jost", sans-serif; font-size: 0.82rem; font-weight: 600; color: #78716c; text-transform: uppercase; letter-spacing: 0.06em; }
-.subtotal-precio { font-family: "Cormorant Garamond", serif; font-size: 1.4rem; font-weight: 700; color: #d43868; }
-.subtotal-nota { font-family: "Jost", sans-serif; font-size: 0.7rem; color: #a8a29e; margin-bottom: 1rem; }
-
-.drawer-divider { border: none; border-top: 1px solid rgba(242,84,128,0.1); margin: 0.25rem 0 1.1rem; }
-
-/* ── Form ── */
-.form-section { margin-bottom: 1.25rem; }
-.form-title { font-family: "Cormorant Garamond", serif; font-size: 1.15rem; color: #292524; margin-bottom: 0.2rem; }
-.form-sub { font-family: "Jost", sans-serif; font-size: 0.75rem; color: #a8a29e; margin-bottom: 0.9rem; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-.form-field { display: flex; flex-direction: column; gap: 0.2rem; }
-.form-field--full { grid-column: 1 / -1; }
-.form-label { font-family: "Jost", sans-serif; font-size: 0.7rem; font-weight: 600; color: #78716c; letter-spacing: 0.05em; text-transform: uppercase; }
-.form-input {
-  width: 100%; padding: 0.55rem 0.75rem;
-  border: 1px solid rgba(242,84,128,0.2);
-  border-radius: 0.6rem;
-  font-family: "Jost", sans-serif; font-size: 0.84rem; color: #292524;
-  background: white; outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-.form-input:focus { border-color: #f25480; box-shadow: 0 0 0 3px rgba(242,84,128,0.12); }
-.form-input::placeholder { color: #c4b5b1; }
-.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a8a29e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 1rem; padding-right: 2rem; }
-.form-textarea { resize: vertical; min-height: 60px; }
-.form-error { font-family: "Jost", sans-serif; font-size: 0.78rem; color: #dc2626; margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fee2e2; border-radius: 0.5rem; }
-
-/* ── CTA ── */
-.cta-section { flex-shrink: 0; position: sticky; bottom: 0; background: #fffbf8; padding-top: 0.75rem; }
-.cta-wa-btn {
-  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-  width: 100%; padding: 1rem;
-  background: linear-gradient(135deg, #25D366, #1da851);
-  color: white; border: none; border-radius: 1.1rem;
-  font-family: "Jost", sans-serif; font-size: 0.95rem; font-weight: 700;
-  cursor: pointer; letter-spacing: 0.02em;
-  box-shadow: 0 6px 24px rgba(37,211,102,0.35);
-  transition: all 0.2s;
-}
-.cta-wa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.45); }
-.cta-wa-btn:active { transform: translateY(0); }
-.cta-disclaimer { font-family: "Jost", sans-serif; font-size: 0.68rem; color: #a8a29e; text-align: center; margin-top: 0.5rem; }
-.cta-link { background: none; border: none; color: #f25480; cursor: pointer; font-size: 0.68rem; text-decoration: underline; padding: 0; font-family: "Jost", sans-serif; }
+/* Formulario */
+.cd-form { display: grid; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.cd-form-title { font-size: 1.6rem; }
+.cd-form-sub { font-size: 0.88rem; color: var(--muted); margin-top: -0.6rem; }
+.cd-row { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 440px) { .cd-row { grid-template-columns: 1fr 1fr; } }
+.cd-errors { padding: 0.9rem 1.1rem; background: #fdecea; border: 1px solid #f3b8b3; border-radius: 0.9rem; color: var(--danger); font-size: 0.9rem; }
+.cd-errors ul { margin: 0.4rem 0 0; padding-left: 1.1rem; list-style: disc; }
+.cd-errors a { color: var(--danger); text-decoration: underline; }
+.cd-legal { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+.cd-legal strong { color: var(--ink); font-weight: 500; }
+.cd-ok { padding: 0.9rem 1.1rem; background: var(--sage-soft); color: var(--sage); border-radius: 0.9rem; font-size: 0.9rem; }
+.cd-clear { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; margin-left: 0.4rem; }
 </style>

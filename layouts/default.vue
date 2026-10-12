@@ -1,250 +1,287 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-ivory">
+  <div class="app">
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <NuxtRouteAnnouncer />
+    <NuxtLoadingIndicator color="#8c1f45" :height="3" />
 
-    <!-- ── Header ───────────────────────────────── -->
-    <header class="sticky top-0 z-50 bg-ivory/90 backdrop-blur-md border-b border-petal-100">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="flex items-center justify-between h-18">
+    <!-- Franja informativa (datos reales de las políticas de servicio) -->
+    <aside class="topbar" aria-label="Información de pedidos">
+      <span>Pedidos con 1 a 2 días de anticipación</span>
+      <span class="topbar-sep" aria-hidden="true">✦</span>
+      <span>Entrega a domicilio en {{ NEGOCIO.ciudad }}</span>
+    </aside>
 
-          <!-- Logo -->
-          <NuxtLink to="/" class="flex items-center gap-3 group">
-            <img src="/regocijo.png" style="height:44px;width:44px;object-fit:contain;border-radius:50%;" />
-            <div>
-              <p class="font-display text-xl leading-none text-stone-800 group-hover:text-petal-600 transition-colors">
-                Regocijo
-              </p>
-              <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-400 leading-none mt-0.5">
-                Floristería
-              </p>
-            </div>
+    <!-- ── Header ─────────────────────────────── -->
+    <header ref="headerEl" class="hd" :class="{ 'hd--scrolled': scrolled }">
+      <div class="wrap hd-inner">
+        <NuxtLink to="/" class="brand">
+          <img src="/regocijosinfondo.png" alt="" width="44" height="44" class="brand-logo" />
+          <span class="brand-text"><span class="brand-name">Regocijo</span>{{ ' ' }}<span class="brand-tag">Floristería</span></span>
+        </NuxtLink>
+
+        <nav class="nav" aria-label="Principal">
+          <NuxtLink v-for="l in navLinks" :key="l.to" :to="l.to" class="nav-link link-draw">{{ l.label }}</NuxtLink>
+        </nav>
+
+        <div class="hd-actions">
+          <NuxtLink to="/catalogo?buscar=1" class="icon-btn" aria-label="Buscar ramos en el catálogo">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
           </NuxtLink>
 
-          <!-- Nav desktop -->
-          <nav class="hidden md:flex items-center gap-8">
-            <NuxtLink
-              v-for="link in navLinks"
-              :key="link.to"
-              :to="link.to"
-              class="font-body text-sm text-stone-500 hover:text-petal-600 transition-colors tracking-wide"
-              active-class="text-petal-600 font-medium"
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </nav>
+          <button type="button" class="icon-btn" aria-haspopup="dialog" :aria-label="etiquetaCarrito" @click="abrir">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14l-1.1 11H6.1L5 9z" /><path d="M9 9V7a3 3 0 016 0v2" /></svg>
+            <Transition name="pop">
+              <span v-if="store.cantidadCarrito > 0" :key="store.cantidadCarrito" class="cart-badge" aria-hidden="true">{{ store.cantidadCarrito }}</span>
+            </Transition>
+          </button>
 
-          <!-- Actions -->
-          <div class="flex items-center gap-3">
-            <!-- Búsqueda rápida -->
-            <button
-              class="p-2 rounded-full hover:bg-petal-50 text-stone-500 hover:text-petal-600 transition-colors"
-              aria-label="Buscar"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
-            </button>
-
-            <!-- Carrito -->
-            <button
-              class="relative p-2 rounded-full hover:bg-petal-50 text-stone-500 hover:text-petal-600 transition-colors"
-              aria-label="Ver carrito"
-              @click="carritoAbierto = true"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-              </svg>
-              <Transition name="badge-pop">
-                <span
-                  v-if="productosStore.cantidadCarrito > 0"
-                  :key="productosStore.cantidadCarrito"
-                  class="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center
-                         bg-petal-500 text-white text-[10px] font-medium rounded-full"
-                >
-                  {{ productosStore.cantidadCarrito }}
-                </span>
-              </Transition>
-            </button>
-
-            <!-- Botón hamburguesa (solo móvil) -->
-            <button
-              class="md:hidden p-2 rounded-full hover:bg-petal-50 text-stone-500 hover:text-petal-600 transition-colors"
-              aria-label="Abrir menú"
-              @click="menuAbierto = !menuAbierto"
-            >
-              <!-- Icono hamburguesa / X -->
-              <svg v-if="!menuAbierto" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            class="icon-btn menu-btn"
+            :aria-expanded="menu"
+            aria-controls="menu-movil"
+            :aria-label="menu ? 'Cerrar menú' : 'Abrir menú'"
+            @click="menu = !menu"
+          >
+            <svg v-if="!menu" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg>
+            <svg v-else viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
         </div>
       </div>
-
-      <!-- Menú móvil desplegable -->
-      <Transition
-        enter-active-class="transition-all duration-300 ease-out"
-        enter-from-class="opacity-0 -translate-y-2"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="transition-all duration-200 ease-in"
-        leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 -translate-y-2"
-      >
-        <nav
-          v-if="menuAbierto"
-          class="md:hidden border-t border-petal-100 bg-ivory/95 backdrop-blur-md"
-        >
-          <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
-            <NuxtLink
-              v-for="link in navLinks"
-              :key="link.to"
-              :to="link.to"
-              class="font-body text-sm text-stone-600 hover:text-petal-600 hover:bg-petal-50 transition-colors tracking-wide px-4 py-3 rounded-xl"
-              active-class="text-petal-600 font-medium bg-petal-50"
-              @click="menuAbierto = false"
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </div>
-        </nav>
-      </Transition>
     </header>
 
-    <!-- ── Main content ──────────────────────────── -->
-    <main class="flex-1">
+    <!-- Menú móvil -->
+    <Transition name="menu">
+      <nav v-if="menu" id="menu-movil" class="mm" aria-label="Menú móvil" :style="{ top: menuTop }">
+        <div class="mm-nav">
+          <NuxtLink v-for="(l, i) in navLinks" :key="l.to" :to="l.to" class="mm-link" :style="{ '--i': i }">
+            <span class="mm-num" aria-hidden="true">0{{ i + 1 }}</span>{{ l.label }}
+          </NuxtLink>
+        </div>
+        <div class="mm-foot">
+          <a :href="whatsappUrl()" target="_blank" rel="noopener noreferrer" class="btn btn--wa btn--block">
+            <IconWhatsApp width="20" height="20" /> Escríbenos por WhatsApp
+            <span class="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+          <p class="mm-hours">{{ NEGOCIO.horarios[0].dia }}: {{ NEGOCIO.horarios[0].hora }}</p>
+        </div>
+      </nav>
+    </Transition>
+
+    <!-- ── Contenido ───────────────────────────── -->
+    <main id="contenido" class="main" tabindex="-1" :inert="menu">
       <slot />
     </main>
 
-    <!-- ── Footer ────────────────────────────────── -->
-    <footer class="bg-stone-800 text-stone-300 mt-24">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-
-          <!-- Brand -->
-          <div class="md:col-span-2">
-            <div class="flex items-center gap-3 mb-4">
-              <img src="/regocijo.png" style="height:48px;width:48px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.08);" />
-              <div>
-                <p class="font-display text-2xl text-white leading-none">Regocijo</p>
-                <p class="font-body text-xs tracking-[0.2em] uppercase text-petal-300 mt-0.5">Floristería</p>
-              </div>
-            </div>
-            <p class="font-body text-sm text-stone-400 leading-relaxed max-w-xs">
-              Creamos ramos de flores artesanales que convierten cada momento en un recuerdo eterno.
-              Flores frescas, amor en cada pétalo.
-            </p>
-            <div class="flex gap-3 mt-6">
-              <a href="https://www.instagram.com/regocijo_detalles/" target="_blank" rel="noopener" class="p-2 rounded-full bg-stone-700 hover:bg-petal-500 transition-colors text-stone-300 hover:text-white" aria-label="Instagram">
-                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                </svg>
-              </a>
-              <a href="https://wa.me/573127506785?text=Hola%20quiero%20información%20sobre%20sus%20ramos" target="_blank" rel="noopener" class="p-2 rounded-full bg-stone-700 hover:bg-petal-500 transition-colors text-stone-300 hover:text-white" aria-label="WhatsApp">
-                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Links -->
-          <div>
-            <h4 class="font-body text-xs tracking-[0.2em] uppercase text-stone-400 mb-4">Catalogo</h4>
-            <ul class="space-y-2">
-              <li v-for="link in footerShopLinks" :key="link.to">
-                <NuxtLink :to="link.to" class="font-body text-sm text-stone-400 hover:text-petal-300 transition-colors">
-                  {{ link.label }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Contact -->
-          <div>
-            <h4 class="font-body text-xs tracking-[0.2em] uppercase text-stone-400 mb-4">Contacto</h4>
-            <ul class="space-y-3">
-              <li class="flex items-start gap-2 text-sm text-stone-400">
-                <span class="mt-0.5" aria-hidden="true">📍</span>
-                <span>Solo Domicilio</span>
-              </li>
-              <li class="flex items-center gap-2 text-sm text-stone-400">
-                <span aria-hidden="true">📞</span>
-                <span>+57 323 4999029</span>
-                <span>+57 312 7506785</span>
-              </li>
-              <li class="flex items-center gap-2 text-sm text-stone-400">
-                <span aria-hidden="true">✉️</span>
-                <span>hola@regocijofloristeria.co</span>
-              </li>
-              <li class="flex items-center gap-2 text-sm text-stone-400">
-                <span aria-hidden="true">🕐</span>
-                <span>Lun – Sáb: 8 am – 7 pm</span>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-        <!-- Bottom bar -->
-        <div class="mt-16 pt-8 border-t border-stone-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p class="font-body text-xs text-stone-500">
-            © {{ new Date().getFullYear() }} Regocijo Floristería · Hecho con 🌺 en Colombia
+    <!-- ── Footer ──────────────────────────────── -->
+    <footer class="ft on-dark" :inert="menu">
+      <p class="ft-giant" aria-hidden="true">Regocijo</p>
+      <div class="wrap ft-inner">
+        <div class="ft-brand">
+          <p class="ft-lema">{{ NEGOCIO.lema }}.</p>
+          <p class="ft-about">
+            Ramos de flores artesanales, armados a mano y entregados a domicilio en {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}.
           </p>
-          <div class="flex gap-6">
-            <button @click="openPolicy('privacy')" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors" style="background:none;border:none;cursor:pointer;padding:0;">Privacidad</button>
-            <button @click="openPolicy('terms')" class="font-body text-xs text-stone-500 hover:text-petal-300 transition-colors" style="background:none;border:none;cursor:pointer;padding:0;">Términos</button>
+          <div class="ft-social">
+            <a :href="NEGOCIO.instagram.url" target="_blank" rel="noopener noreferrer" class="ft-icon" :aria-label="`Instagram ${NEGOCIO.instagram.usuario} (se abre en una pestaña nueva)`">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none" /></svg>
+            </a>
+            <a :href="whatsappUrl()" target="_blank" rel="noopener noreferrer" class="ft-icon" aria-label="WhatsApp (se abre en una pestaña nueva)">
+              <IconWhatsApp width="20" height="20" />
+            </a>
           </div>
         </div>
+
+        <nav class="ft-col" aria-labelledby="ft-cat">
+          <h2 id="ft-cat" class="ft-h">Catálogo</h2>
+          <ul>
+            <li v-for="l in footerShop" :key="l.to"><NuxtLink :to="l.to" class="ft-link">{{ l.label }}</NuxtLink></li>
+          </ul>
+        </nav>
+
+        <nav class="ft-col" aria-labelledby="ft-info">
+          <h2 id="ft-info" class="ft-h">Información</h2>
+          <ul>
+            <li><NuxtLink to="/nosotros" class="ft-link">Nosotros</NuxtLink></li>
+            <li><NuxtLink to="/contacto" class="ft-link">Contacto</NuxtLink></li>
+            <li><NuxtLink to="/terminos" class="ft-link">Términos y condiciones</NuxtLink></li>
+            <li><NuxtLink to="/privacidad" class="ft-link">Política de privacidad</NuxtLink></li>
+            <li><NuxtLink to="/cookies" class="ft-link">Política de cookies</NuxtLink></li>
+          </ul>
+        </nav>
+
+        <div class="ft-col">
+          <h2 class="ft-h">Contacto</h2>
+          <address class="ft-addr">
+            <p>{{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }} · {{ NEGOCIO.modalidad }}</p>
+            <p v-for="t in NEGOCIO.telefonos" :key="t.e164"><a :href="`tel:+${t.e164}`" class="ft-link">{{ t.display }}</a></p>
+            <p v-if="NEGOCIO.email"><a :href="`mailto:${NEGOCIO.email}`" class="ft-link">{{ NEGOCIO.email }}</a></p>
+            <p v-for="h in NEGOCIO.horarios" :key="h.dia" class="ft-hours"><span>{{ h.dia }}</span> {{ h.hora }}</p>
+          </address>
+        </div>
+      </div>
+
+      <div class="wrap ft-bar">
+        <p>© {{ anio }} {{ NEGOCIO.nombre }}<template v-if="NEGOCIO.nit"> · NIT {{ NEGOCIO.nit }}</template> · {{ NEGOCIO.pais }}</p>
+        <p>Esta tienda no usa cookies ni rastreadores. <NuxtLink to="/cookies" class="ft-link">Saber más</NuxtLink></p>
       </div>
     </footer>
 
+    <CarritoDrawer />
+    <AppToast />
   </div>
-  <CarritoDrawer v-model="carritoAbierto" @open-policy="openPolicy" />
-  <PolicyModal v-model="policyOpen" :initial-tab="policyTab" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { NEGOCIO } from '~/data/negocio'
 import { useProductosStore } from '~/stores/productos'
-import PolicyModal from '~/components/PolicyModal.vue'
-import CarritoDrawer from '~/components/CarritoDrawer.vue'
 
-const productosStore = useProductosStore()
-const menuAbierto = ref(false)
-const carritoAbierto = useState('carritoAbierto', () => false)
-const policyOpen = ref(false)
-const policyTab = ref<'terms' | 'privacy'>('terms')
-function openPolicy(tab: 'terms' | 'privacy') {
-  policyTab.value = tab
-  policyOpen.value = true
-}
+const store = useProductosStore()
+const { abrir } = useCarritoUI()
+const route = useRoute()
+
+// Menú móvil: patrón «disclosure». Escape cierra, el fondo queda inerte y sin scroll mientras está abierto.
+const menu = ref(false)
+const headerEl = ref<HTMLElement | null>(null)
+const menuTop = ref('0px') // el menú empieza justo debajo del encabezado (la franja superior puede ocupar 1 o 2 líneas)
+function onKey(e: KeyboardEvent) { if (e.key === 'Escape') menu.value = false }
+watch(menu, (v) => {
+  if (!import.meta.client) return
+  if (v && headerEl.value) menuTop.value = `${Math.max(0, Math.round(headerEl.value.getBoundingClientRect().bottom))}px`
+  document.documentElement.style.overflow = v ? 'hidden' : ''
+  if (v) document.addEventListener('keydown', onKey)
+  else document.removeEventListener('keydown', onKey)
+})
+watch(() => route.fullPath, () => { menu.value = false })
+
+const scrolled = ref(false)
+function onScroll() { scrolled.value = window.scrollY > 12 }
+onMounted(() => { onScroll(); window.addEventListener('scroll', onScroll, { passive: true }) })
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  document.removeEventListener('keydown', onKey)
+  document.documentElement.style.overflow = ''
+})
+
+const anio = new Date().getFullYear()
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
   { to: '/catalogo', label: 'Catálogo' },
-  { to: '/editar-ramo', label: 'Edita tu Ramo' },
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/contacto', label: 'Contacto' },
 ]
-
-const footerShopLinks = [
+const footerShop = [
   { to: '/catalogo', label: 'Todos los ramos' },
   { to: '/catalogo?categoria=rosas', label: 'Rosas' },
   { to: '/catalogo?categoria=girasoles', label: 'Girasoles' },
   { to: '/catalogo?categoria=lirios', label: 'Lirios' },
   { to: '/catalogo?categoria=mixtos', label: 'Mixtos' },
 ]
+
+const etiquetaCarrito = computed(() => {
+  const n = store.cantidadCarrito
+  return n === 0 ? 'Abrir carrito (vacío)' : `Abrir carrito, ${n} ${n === 1 ? 'ramo' : 'ramos'}`
+})
 </script>
 
-<style>
-/* Badge pop animation for cart count */
-.badge-pop-enter-active { animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.badge-pop-leave-active { transition: opacity 0.15s ease; }
-.badge-pop-leave-to { opacity: 0; }
-@keyframes badge-pop {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+<style scoped>
+.app { min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+/* clip (no hidden): evita que adornos decorativos creen scroll horizontal sin romper los elementos sticky */
+.main { flex: 1; position: relative; z-index: 1; outline: none; overflow-x: clip; }
+
+/* Franja superior */
+.topbar {
+  position: relative; z-index: 2;
+  display: flex; justify-content: center; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+  padding: 0.55rem 1rem; background: var(--ink); color: var(--cream);
+  font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; text-align: center;
+}
+.topbar-sep { color: var(--gold-soft); }
+
+/* Header */
+.hd {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(251, 246, 239, 0.86); backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+}
+.hd--scrolled { border-color: var(--line); box-shadow: 0 10px 30px -22px rgba(42, 26, 31, 0.5); background: rgba(251, 246, 239, 0.94); }
+.hd-inner { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+
+.brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--ink); }
+.brand-logo { width: 2.75rem; height: 2.75rem; object-fit: contain; transition: transform 0.7s var(--ease-out); }
+.brand:hover .brand-logo { transform: rotate(18deg) scale(1.06); }
+.brand-text { display: flex; flex-direction: column; line-height: 1; }
+.brand-name { font: 500 1.9rem/0.9 var(--serif); letter-spacing: -0.01em; }
+.brand-tag { font-size: 0.62rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--rose); margin-top: 0.3rem; }
+
+.nav { display: none; gap: 2.25rem; align-items: center; }
+.nav-link { padding: 0.5rem 0; font-size: 0.92rem; letter-spacing: 0.04em; color: var(--ink); }
+.nav-link:hover { color: var(--wine); }
+.nav-link.router-link-exact-active { color: var(--wine); font-weight: 500; }
+@media (min-width: 880px) { .nav { display: flex; } .menu-btn { display: none; } }
+
+.hd-actions { display: flex; align-items: center; gap: 0.25rem; }
+.cart-badge {
+  position: absolute; top: 0.2rem; right: 0.1rem;
+  min-width: 1.15rem; height: 1.15rem; padding: 0 0.3rem; border-radius: 9999px;
+  display: grid; place-items: center;
+  background: var(--wine); color: #fff; font-size: 0.68rem; font-weight: 600; line-height: 1;
+}
+.pop-enter-active { animation: pop 0.45s var(--ease-out); }
+@keyframes pop { from { transform: scale(0); } 60% { transform: scale(1.25); } to { transform: scale(1); } }
+
+/* Menú móvil */
+.mm {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; padding: 1.5rem var(--gutter) 2rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--cream); overflow-y: auto;
+}
+.mm-nav { display: grid; gap: 0.25rem; }
+.mm-link {
+  display: flex; align-items: baseline; gap: 1rem; padding: 0.6rem 0;
+  font: 300 clamp(2.6rem, 11vw, 4rem)/1.05 var(--serif); letter-spacing: -0.02em; color: var(--ink); text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  animation: mm-in 0.7s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms + 120ms);
+  transition: color 0.25s, padding-left 0.4s var(--ease-out);
+}
+.mm-link:hover { color: var(--wine); padding-left: 0.6rem; }
+.mm-link.router-link-exact-active { color: var(--wine); font-style: italic; }
+.mm-num { font: 500 0.75rem var(--sans); letter-spacing: 0.2em; color: var(--muted); }
+@keyframes mm-in { from { opacity: 0; transform: translateY(1.5rem); } }
+.mm-foot { display: grid; gap: 0.75rem; margin-top: 2rem; }
+.mm-hours { font-size: 0.85rem; color: var(--muted); text-align: center; }
+.menu-enter-active, .menu-leave-active { transition: opacity 0.35s var(--ease-out); }
+.menu-enter-from, .menu-leave-to { opacity: 0; }
+
+/* Footer */
+.ft { position: relative; z-index: 1; margin-top: 6rem; background: var(--ink); color: #d9cace; overflow: hidden; padding-top: 4.5rem; }
+.ft-giant {
+  position: absolute; left: 50%; bottom: -0.18em; transform: translateX(-50%);
+  font: 300 clamp(7rem, 26vw, 24rem)/0.8 var(--serif); letter-spacing: -0.04em; white-space: nowrap;
+  color: rgba(251, 246, 239, 0.05); pointer-events: none; user-select: none;
+}
+.ft-inner { position: relative; display: grid; gap: 2.75rem; padding-bottom: 3.5rem; }
+@media (min-width: 760px) { .ft-inner { grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 3rem; } }
+.ft-lema { font: 300 clamp(2rem, 4vw, 2.8rem)/1.05 var(--serif); font-style: italic; color: var(--cream); }
+.ft-about { margin-top: 1rem; max-width: 20rem; font-size: 0.95rem; line-height: 1.7; }
+.ft-social { display: flex; gap: 0.6rem; margin-top: 1.5rem; }
+.ft-icon {
+  display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 50%;
+  border: 1px solid rgba(251, 246, 239, 0.28); color: var(--cream);
+  transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.35s var(--ease-out);
+}
+.ft-icon:hover { background: var(--gold-soft); border-color: var(--gold-soft); color: var(--ink); transform: translateY(-3px); }
+.ft-h { font: 500 0.74rem var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 1.1rem; }
+.ft-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55rem; }
+.ft-link { color: #d9cace; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s var(--ease-out), color 0.25s; }
+.ft-link:hover { color: #fff; background-size: 100% 1px; }
+.ft-addr { font-style: normal; display: grid; gap: 0.45rem; font-size: 0.95rem; }
+.ft-hours { font-size: 0.85rem; line-height: 1.4; }
+.ft-hours span { display: block; color: #b9a7ad; }
+.ft-bar {
+  position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem;
+  padding-block: 1.5rem 2.25rem; border-top: 1px solid rgba(251, 246, 239, 0.14); font-size: 0.82rem; color: #b9a7ad;
 }
 </style>
