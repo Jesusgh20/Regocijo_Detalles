@@ -27,7 +27,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'Ramos de flores artesanales con entrega a domicilio en Montería, Córdoba. Rosas, lirios, girasoles y ramos mixtos hechos a mano.',
+            'Ramos de flores hechos a mano, con entrega a domicilio en Montería, Córdoba. Rosas, lirios, girasoles y ramos mixtos.',
         },
         { name: 'theme-color', content: '#fbf6ef' },
         { property: 'og:site_name', content: 'Regocijo Floristería' },

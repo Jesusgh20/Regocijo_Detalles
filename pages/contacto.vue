@@ -95,9 +95,9 @@
               <span class="dato-k">Ubicación</span>
               <span>{{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }} · {{ NEGOCIO.modalidad }}</span>
             </li>
-            <li v-for="t in NEGOCIO.telefonos" :key="t.e164">
-              <span class="dato-k">Teléfono</span>
-              <a :href="`tel:+${t.e164}`" class="link-inline">{{ t.display }}</a>
+            <li>
+              <span class="dato-k">Teléfono y WhatsApp</span>
+              <a :href="`tel:+${NEGOCIO.whatsapp.e164}`" class="link-inline">{{ NEGOCIO.whatsapp.display }}</a>
             </li>
             <li v-if="NEGOCIO.email">
               <span class="dato-k">Correo</span>

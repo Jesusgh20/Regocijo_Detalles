@@ -26,11 +26,7 @@ export const NEGOCIO = {
 
   // ── Contacto verificado (tarjeta de marca regocijoinfo.jpeg) ─────────────
   whatsapp: { display: '+57 312 750 6785', e164: '573127506785' },
-  telefonos: [
-    { display: '+57 312 750 6785', e164: '573127506785' },
-    { display: '+57 323 499 9029', e164: '573234999029' },
-  ],
-  instagram: { usuario: '@regocijo_detalles', url: 'https://www.instagram.com/regocijo_detalles/' },
+  instagram: { usuario: '@regocijo_floristeria', url: 'https://www.instagram.com/regocijo_floristeria/' },
 
   /** Modalidad de venta */
   modalidad: 'Solo domicilio',

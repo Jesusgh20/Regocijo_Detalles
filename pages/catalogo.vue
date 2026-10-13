@@ -2,7 +2,7 @@
   <div>
     <PageHero eyebrow="Colección completa">
       <template #title>Nuestros <em>ramos</em></template>
-      Elige el ramo perfecto para cada momento. Cada diseño se arma a mano por encargo.
+      Elige el ramo perfecto para cada momento. Cada diseño se prepara por encargo.
     </PageHero>
 
     <!-- Filtros -->

@@ -77,7 +77,7 @@
 
             <div class="field">
               <label class="field-label" for="f-colores">Colores disponibles <span class="opt">(opcional)</span></label>
-              <input id="f-colores" v-model="form.colores" class="input" type="text" maxlength="300" placeholder="Ej: Color de su preferencia" />
+              <input id="f-colores" v-model="form.colores" class="input" type="text" maxlength="300" placeholder="Ej: El color que prefieras" />
             </div>
           </section>
 

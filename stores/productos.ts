@@ -151,31 +151,31 @@ export function altImagen(ramo: Pick<Ramo, 'nombre' | 'descripcion' | 'imagenes'
 export const RAMOS_SEED: RamoBase[] = [
   {
     id: 1, slug: 'doble-amor', nombre: 'Doble Amor', categoria: 'rosas',
-    descripcion: '2 rosas del color de su preferencia con un toque de gipsofila blanca.',
+    descripcion: '2 rosas del color que prefieras con un toque de gipsofila blanca.',
     tamanoTexto: 'XS', precio_base: 20000,
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: [], disponible: true,
     tags_busqueda: ['rosas', 'detalle pequeño', 'economico'],
   },
   {
     id: 2, slug: 'tres-latidos', nombre: 'Tres Latidos', categoria: 'rosas',
-    descripcion: '3 rosas del color de su preferencia, con un toque de gipsofila blanca.',
+    descripcion: '3 rosas del color que prefieras, con un toque de gipsofila blanca.',
     tamanoTexto: 'XS', precio_base: 25000,
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: [], disponible: true,
     tags_busqueda: ['rosas', 'detalle pequeño'],
   },
   {
     id: 3, slug: 'dulce-romance', nombre: 'Dulce Romance', categoria: 'rosas',
-    descripcion: '5 rosas del color de su preferencia, con un toque de gipsofila blanca y follaje.',
+    descripcion: '5 rosas del color que prefieras, con un toque de gipsofila blanca y follaje.',
     tamanoTexto: 'S', precio_base: 50000,
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: [], disponible: true,
     tags_busqueda: ['rosas', 'romantico'],
   },
   {
     id: 4, slug: 'pasion-eterna', nombre: 'Pasión Eterna', categoria: 'rosas',
-    descripcion: 'Bouquet de rosas redondo rodeado de gipsofila. Color de su preferencia. Mariposas doradas.',
+    descripcion: 'Ramo de rosas redondo rodeado de gipsofila. El color que prefieras. Mariposas doradas.',
     detalle: 'Dos colores de rosas a partir de las 40 unidades.',
     variantes_precio: [
       { etiqueta: '20 rosas', tamano: 'S', precio: 80000 },
@@ -184,21 +184,21 @@ export const RAMOS_SEED: RamoBase[] = [
       { etiqueta: '80 rosas', tamano: 'L', precio: 250000 },
       { etiqueta: '100 rosas', tamano: 'XL', precio: 340000 },
     ],
-    colores_disponibles: 'Color de su preferencia; 2 colores desde 40 unidades',
+    colores_disponibles: 'El color que prefieras; 2 colores desde 40 unidades',
     imagenes: ['/pasioneterna1.jpg', '/pasioneterna2.jpg', '/pasioneterna3.jpg', '/pasioneterna4.jpg', '/pasioneterna5.jpg', '/pasioneterna6.jpg', '/pasioneterna7.jpg', '/pasioneterna8.jpg', '/pasioneterna9.jpg'],
     disponible: true, destacado: true,
     tags_busqueda: ['rosas', 'grande', 'mariposas', 'premium'],
   },
   {
     id: 5, slug: 'pasion-pura', nombre: 'Pasión Pura', categoria: 'rosas',
-    descripcion: 'Bouquet de rosas en diseño vertical. Color de su preferencia.',
+    descripcion: 'Ramo de rosas en diseño vertical. El color que prefieras.',
     detalle: 'Dos colores de rosas a partir de las 40 unidades.',
     variantes_precio: [
       { etiqueta: '10 rosas', tamano: 'S', precio: 70000 },
       { etiqueta: '20 rosas', tamano: 'M', precio: 90000 },
       { etiqueta: '40 rosas', tamano: 'L', precio: 140000 },
     ],
-    colores_disponibles: 'Color de su preferencia; 2 colores desde 40 unidades',
+    colores_disponibles: 'El color que prefieras; 2 colores desde 40 unidades',
     imagenes: ['/pasionpura1.jpg', '/pasionpura2.jpg', '/pasionpura3.jpg', '/pasionpura4.jpg', '/pasionpura5.jpg', '/pasionpura6.jpg', '/pasionpura7.jpg'],
     disponible: true,
     tags_busqueda: ['rosas', 'vertical'],
@@ -208,14 +208,14 @@ export const RAMOS_SEED: RamoBase[] = [
     descripcion: 'Arreglo de rosas en caja de corazón con maquillajes.',
     tamanoTexto: 'M', precio_base: 210000,
     incluye: ['Brillo Labial (Atenea/Anik)', 'Blush (Atenea)', 'Beauty blender', 'Pestañina (Prosa)', 'Pinzas de cabello'],
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: ['/velvetkiss1.jpg', '/velvetkiss2.jpg'],
     disponible: true,
     tags_busqueda: ['caja corazon', 'regalo', 'maquillaje', 'rosas'],
   },
   {
     id: 7, slug: 'susurro-de-rosas', nombre: 'Susurro de Rosas', categoria: 'rosas',
-    descripcion: 'Bouquet con minirosas, follaje y un toque de gipsofila.',
+    descripcion: 'Ramo con minirosas, follaje y un toque de gipsofila.',
     detalle: 'Las minirosas tienen flores de menor tamaño y varios botones por tallo.',
     variantes_precio: [
       { etiqueta: '1 color', tamano: 'S', precio: 70000 },
@@ -228,18 +228,18 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 8, slug: 'royal-princess', nombre: 'Royal Princess', categoria: 'rosas',
-    descripcion: 'Bouquet de 150 rosas, lirios y flores complementarias, listón con mensaje y mariposas. Color de su preferencia.', // VERIFICAR 3a flor
+    descripcion: 'Ramo de 150 rosas, lirios y flores complementarias, listón con mensaje y mariposas. El color que prefieras.', // VERIFICAR 3a flor
     tamanoTexto: 'XXL', precio_base: 480000,
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: ['/royalprincess1.jpg', '/royalprincess2.jpg', '/royalprincess3.jpg'],
     disponible: true, destacado: true,
     tags_busqueda: ['premium', 'cumpleaños', 'xxl', 'lujo', 'rosas'],
   },
   {
     id: 9, slug: 'love', nombre: 'Love', categoria: 'rosas',
-    descripcion: 'Bouquet de 40 rosas, gerberas, hortensias y lazos. Color de su preferencia.',
+    descripcion: 'Ramo de 40 rosas, gerberas, hortensias y lazos. El color que prefieras.',
     tamanoTexto: 'XL', precio_base: 250000,
-    colores_disponibles: 'Color de su preferencia',
+    colores_disponibles: 'El color que prefieras',
     imagenes: ['/love1.jpg'],
     disponible: true,
     tags_busqueda: ['rosas', 'gerberas', 'hortensias'],
@@ -274,7 +274,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 14, slug: 'amanecer', nombre: 'Amanecer', categoria: 'girasoles',
-    descripcion: 'Bouquet de girasoles con follaje verde y toque de gipsofila.',
+    descripcion: 'Ramo de girasoles con follaje verde y toque de gipsofila.',
     variantes_precio: [
       { etiqueta: '5 girasoles', tamano: 'M', precio: 80000 },
       { etiqueta: '7 girasoles', tamano: 'L', precio: 110000 },
@@ -286,7 +286,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 15, slug: 'lirio-individual', nombre: 'Lirio Individual / Trío de Lirios', categoria: 'lirios', // VERIFICAR si es ítem propio
-    descripcion: 'Bouquet sencillo con lirio(s) blanco o rosa, envoltura elegante.',
+    descripcion: 'Ramo sencillo con lirio(s) blanco o rosa, envoltura elegante.',
     variantes_precio: [
       { etiqueta: '1 lirio', tamano: 'XS', precio: 15000 },
       { etiqueta: '3 lirios', tamano: 'S', precio: 45000 },
@@ -296,7 +296,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 16, slug: 'delirio', nombre: 'Delirio', categoria: 'lirios',
-    descripcion: 'Bouquet de lirios en envoltura oscura elegante con moño rosa.',
+    descripcion: 'Ramo de lirios en envoltura oscura elegante con moño rosa.',
     variantes_precio: [
       { etiqueta: '7 lirios', tamano: 'M', precio: 120000 },
       { etiqueta: '10 lirios', tamano: 'L', precio: 150000 },
@@ -323,14 +323,14 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 19, slug: 'majestad-v1', nombre: 'Majestad (Versión 1)', categoria: 'mixtos',
-    descripcion: 'Bouquet redondo mixto de claveles, margaritas, astromelias y un lirio.',
+    descripcion: 'Ramo redondo mixto de claveles, margaritas, astromelias y un lirio.',
     tamanoTexto: 'M', precio_base: 90000,
     imagenes: [], disponible: true,
     tags_busqueda: ['mixto'],
   },
   {
     id: 20, slug: 'majestad-v2', nombre: 'Majestad (Versión 2)', categoria: 'mixtos',
-    descripcion: 'Bouquet redondo mixto de clavellina china, rosas y un lirio.',
+    descripcion: 'Ramo redondo mixto de clavellina china, rosas y un lirio.',
     tamanoTexto: 'M', precio_base: 110000,
     imagenes: ['/v2majestad1.jpg', '/v2majestad2.jpg'],
     disponible: true,
@@ -338,7 +338,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 21, slug: 'encanto', nombre: 'Encanto', categoria: 'mixtos',
-    descripcion: 'Bouquet redondo mixto, disponible en 3 combinaciones de flores y tamaños.',
+    descripcion: 'Ramo redondo mixto, disponible en 3 combinaciones de flores y tamaños.',
     variantes_precio: [
       { etiqueta: '2 tipos (minirosas y margaritas)', tamano: 'S', precio: 80000 },
       { etiqueta: '3 tipos (minirosas, margaritas y claveles)', tamano: 'M', precio: 90000 },
@@ -350,7 +350,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 22, slug: 'alma-radiante', nombre: 'Alma Radiante', categoria: 'mixtos',
-    descripcion: 'Bouquet en diseño vertical con minirosas, claveles, margaritas y lirios.',
+    descripcion: 'Ramo en diseño vertical con minirosas, claveles, margaritas y lirios.',
     tamanoTexto: 'M', precio_base: 150000,
     incluye: ['Caja de chocolates Ferrero Rocher'],
     extras_opcionales: [{ nombre: 'Chocolates adicionales', precio: null }],
@@ -360,14 +360,14 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 23, slug: 'dulzura', nombre: 'Dulzura', categoria: 'mixtos',
-    descripcion: 'Bouquet en diseño vertical de margaritas, clavellina o clavel y gerberas.',
+    descripcion: 'Ramo en diseño vertical de margaritas, clavellina o clavel y gerberas.',
     tamanoTexto: 'M', precio_base: 90000,
     imagenes: [], disponible: true,
     tags_busqueda: ['mixto', 'gerberas'],
   },
   {
     id: 24, slug: 'ternura', nombre: 'Ternura', categoria: 'mixtos',
-    descripcion: 'Bouquet mixto en diseño vertical con margaritas, claveles y pinochos, con peluche (Snoopy, oso u otro personaje, según disponibilidad).',
+    descripcion: 'Ramo mixto en diseño vertical con margaritas, claveles y pinochos, con peluche (Snoopy, oso u otro personaje, según disponibilidad).',
     detalle: 'El valor del peluche es adicional al precio del ramo.',
     tamanoTexto: 'L y XL', precio_base: 120000,
     extras_opcionales: [{ nombre: 'Peluche', precio: null }],
@@ -377,7 +377,7 @@ export const RAMOS_SEED: RamoBase[] = [
   },
   {
     id: 25, slug: 'regocijo', nombre: 'Regocijo', categoria: 'mixtos',
-    descripcion: 'Bouquet con lirios, gerberas, minirosas o claveles, margaritas o pompón.',
+    descripcion: 'Ramo con lirios, gerberas, minirosas o claveles, margaritas o pompón.',
     detalle: 'Los colores y flores pueden ser reemplazados por otros según disponibilidad.',
     tamanoTexto: 'XL', precio_base: 190000,
     imagenes: [], // VERIFICAR: antes usaba el logo y la tarjeta de contacto como "fotos"; agrega una foto real del ramo
