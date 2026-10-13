@@ -2,7 +2,7 @@
   <div>
     <PageHero eyebrow="Quiénes somos">
       <template #title>La belleza de <em>sentir</em></template>
-      Somos una floristería de {{ NEGOCIO.ciudad }} que arma ramos artesanales y los lleva a domicilio.
+      Somos una floristería de {{ NEGOCIO.ciudad }} que prepara ramos por encargo y los lleva a domicilio.
     </PageHero>
 
     <!-- Qué hacemos -->
@@ -21,12 +21,11 @@
           <p v-reveal class="eyebrow">Qué hacemos</p>
           <h2 v-reveal="80" class="display about-title">Flores armadas <em>a mano</em></h2>
           <p v-reveal="140">
-            {{ NEGOCIO.nombre }} es una floristería de {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}. Armamos ramos artesanales
-            —rosas, lirios, girasoles y arreglos mixtos— y los entregamos a domicilio.
+            {{ NEGOCIO.nombre }} es una floristería de {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}. Preparamos ramos de rosas, lirios, girasoles y mixtos, y los entregamos a domicilio.
           </p>
           <p v-reveal="200">
-            Cada diseño se prepara por encargo, con el color y el tamaño que prefieras. Como trabajamos con flores naturales,
-            un arreglo puede variar un poco en flores, color o decoración según la disponibilidad del día.
+            Cada diseño se hace con el color y el tamaño que prefieras. Como trabajamos con flores naturales,
+            un ramo puede variar un poco en flores, color o decoración según la disponibilidad del día.
           </p>
           <div v-reveal="260" class="about-div"><Ornament variant="divider" /></div>
           <p v-reveal="300" class="about-sign">{{ NEGOCIO.lema }}.</p>
@@ -91,7 +90,7 @@
 import { NEGOCIO } from '~/data/negocio'
 
 const principios = [
-  { o: 'bloom' as const, t: 'Hecho a mano', d: 'Cada ramo se arma uno por uno, con atención a los colores, el papel y el listón.' },
+  { o: 'bloom' as const, t: 'Uno por uno', d: 'Cada ramo se prepara con atención a los colores, el papel y el listón.' },
   { o: 'sprig' as const, t: 'A tu medida', d: 'Elige el color de tus flores y el tamaño. Cuéntanos la ocasión y te ayudamos a decidir.' },
   { o: 'sunflower' as const, t: 'A domicilio', d: `Llevamos tu ramo hasta la puerta en ${NEGOCIO.ciudad}. El valor del domicilio se confirma antes de pagar.` },
 ]
@@ -107,7 +106,7 @@ const galeria = [
 
 useHead({
   title: 'Nosotros – Regocijo Floristería',
-  meta: [{ name: 'description', content: 'Regocijo es una floristería de Montería que arma ramos artesanales por encargo y los entrega a domicilio.' }],
+  meta: [{ name: 'description', content: 'Regocijo es una floristería de Montería que prepara ramos por encargo y los entrega a domicilio.' }],
 })
 </script>
 

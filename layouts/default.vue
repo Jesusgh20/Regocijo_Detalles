@@ -80,7 +80,7 @@
         <div class="ft-brand">
           <p class="ft-lema">{{ NEGOCIO.lema }}.</p>
           <p class="ft-about">
-            Ramos de flores artesanales, armados a mano y entregados a domicilio en {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}.
+            Ramos de flores hechos a mano y entregados a domicilio en {{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }}.
           </p>
           <div class="ft-social">
             <a :href="NEGOCIO.instagram.url" target="_blank" rel="noopener noreferrer" class="ft-icon" :aria-label="`Instagram ${NEGOCIO.instagram.usuario} (se abre en una pestaña nueva)`">
@@ -114,7 +114,7 @@
           <h2 class="ft-h">Contacto</h2>
           <address class="ft-addr">
             <p>{{ NEGOCIO.ciudad }}, {{ NEGOCIO.departamento }} · {{ NEGOCIO.modalidad }}</p>
-            <p v-for="t in NEGOCIO.telefonos" :key="t.e164"><a :href="`tel:+${t.e164}`" class="ft-link">{{ t.display }}</a></p>
+            <p><a :href="`tel:+${NEGOCIO.whatsapp.e164}`" class="ft-link">{{ NEGOCIO.whatsapp.display }}</a></p>
             <p v-if="NEGOCIO.email"><a :href="`mailto:${NEGOCIO.email}`" class="ft-link">{{ NEGOCIO.email }}</a></p>
             <p v-for="h in NEGOCIO.horarios" :key="h.dia" class="ft-hours"><span>{{ h.dia }}</span> {{ h.hora }}</p>
           </address>

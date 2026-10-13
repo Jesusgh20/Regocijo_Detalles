@@ -29,7 +29,7 @@
 
     <h2 id="productos">3. Productos y diseños</h2>
     <ul>
-      <li>Vendemos arreglos florales elaborados por encargo. Las flores son productos naturales y perecederos.</li>
+      <li>Vendemos ramos y arreglos florales elaborados por encargo. Las flores son productos naturales y perecederos.</li>
       <li>Las fotos del sitio son <strong>referenciales</strong>: pueden variar las flores, el color, el tamaño, la forma o la decoración según la disponibilidad y la temporada.</li>
       <li>Si alguna flor no está disponible, la reemplazaremos por otra de igual o mayor valor y de estilo similar. Cuando sea posible, te avisaremos antes.</li>
       <li>Los ramos que incluyen productos de terceros (chocolates, peluches, maquillaje, etc.) están sujetos a la disponibilidad de esas marcas o referencias.</li>
@@ -76,20 +76,20 @@
     <h2 id="cambios">8. Cancelaciones, cambios, retracto y garantía</h2>
     <h3>Cancelaciones</h3>
     <p>
-      Como cada arreglo se elabora por encargo, <strong>una vez iniciada su elaboración no es posible cancelarlo</strong>. Antes de ese momento, escríbenos
+      Como cada ramo se elabora por encargo, <strong>una vez iniciada su elaboración no es posible cancelarlo</strong>. Antes de ese momento, escríbenos
       cuanto antes y te informamos cómo proceder.
     </p>
     <h3>Derecho de retracto</h3>
     <p>
       En las ventas a distancia, el artículo 47 de la Ley 1480 de 2011 (Estatuto del Consumidor) reconoce el derecho de retracto en ciertos casos, pero lo excluye
       para los bienes perecederos y para los bienes confeccionados según las especificaciones del consumidor o claramente personalizados.
-      Como nuestros arreglos son flores naturales hechas por encargo, <strong>el derecho de retracto no aplica</strong> a ellos.
+      Como nuestros ramos son de flores naturales y se hacen por encargo, <strong>el derecho de retracto no aplica</strong> a ellos.
     </p>
     <h3>Garantía y reclamos</h3>
     <p>
-      Esto no limita tus derechos legales como consumidor. Si tu arreglo llega en mal estado o no corresponde a lo acordado, escríbenos lo antes posible,
-      preferiblemente el mismo día de la entrega, con fotos del arreglo y del empaque. Verificaremos el caso y, si corresponde, te ofreceremos la reposición
-      del arreglo o la devolución del dinero, conforme a la Ley 1480 de 2011. No respondemos por daños posteriores a la entrega causados por el manejo
+      Esto no limita tus derechos legales como consumidor. Si tu ramo llega en mal estado o no corresponde a lo acordado, escríbenos lo antes posible,
+      preferiblemente el mismo día de la entrega, con fotos del ramo y del empaque. Verificaremos el caso y, si corresponde, te ofreceremos la reposición
+      del ramo o la devolución del dinero, conforme a la Ley 1480 de 2011. No respondemos por daños posteriores a la entrega causados por el manejo
       o cuidado inadecuado de las flores.
     </p>
 

@@ -11,7 +11,7 @@ const { public: cfg } = useRuntimeConfig()
 
 useSeoMeta({
   ogTitle: 'Regocijo Floristería – La belleza de sentir',
-  ogDescription: 'Ramos de flores artesanales con entrega a domicilio en Montería, Córdoba.',
+  ogDescription: 'Ramos de flores con entrega a domicilio en Montería, Córdoba.',
   ogImage: `${cfg.siteUrl}/og-image.jpg`,
   ogImageAlt: 'Ramo de flores rosadas y blancas de Regocijo Floristería',
   twitterCard: 'summary_large_image',

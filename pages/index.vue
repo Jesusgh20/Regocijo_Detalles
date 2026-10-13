@@ -8,7 +8,7 @@
 
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow hero-in" style="--d: 0ms">Floristería artesanal · {{ NEGOCIO.ciudad }}</p>
+          <p class="eyebrow hero-in" style="--d: 0ms">Floristería · {{ NEGOCIO.ciudad }}</p>
 
           <h1 id="hero-titulo" class="display hero-title">
             <span class="line"><span style="--d: 120ms">Cada flor</span></span>
@@ -17,7 +17,7 @@
           </h1>
 
           <p class="lead hero-in" style="--d: 520ms">
-            Ramos armados a mano, uno por uno, y entregados a domicilio en {{ NEGOCIO.ciudad }}.
+            Ramos preparados uno por uno y entregados a domicilio en {{ NEGOCIO.ciudad }}.
             {{ NEGOCIO.lema }}.
           </p>
 
@@ -66,7 +66,7 @@
     <div class="mq" aria-hidden="true">
       <div class="mq-track">
         <span v-for="n in 4" :key="n" class="mq-group">
-          Ramos artesanales <i>✦</i> Hechos a mano <i>✦</i> A domicilio en {{ NEGOCIO.ciudad }} <i>✦</i> {{ NEGOCIO.lema }} <i>✦</i>
+          Ramos por encargo <i>✦</i> Rosas, lirios, girasoles y más <i>✦</i> {{ NEGOCIO.lema }} <i>✦</i>
         </span>
       </div>
     </div>
@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
 
 useHead({
   title: 'Regocijo Floristería – La belleza de sentir',
-  meta: [{ name: 'description', content: 'Ramos de flores artesanales armados a mano con entrega a domicilio en Montería, Córdoba. Rosas, lirios, girasoles y ramos mixtos.' }],
+  meta: [{ name: 'description', content: 'Ramos de flores hechos a mano, con entrega a domicilio en Montería, Córdoba. Rosas, lirios, girasoles y ramos mixtos.' }],
 })
 </script>
 

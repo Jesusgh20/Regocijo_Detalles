@@ -122,7 +122,7 @@
             <summary>Entrega, cambios y garantía</summary>
             <div class="acc-body">
               <p>
-                Las flores son productos perecederos y cada arreglo se elabora por encargo. Si tu pedido llega en mal estado,
+                Las flores son productos perecederos y cada ramo se elabora por encargo. Si tu pedido llega en mal estado,
                 escríbenos con fotos lo antes posible y te explicamos la solución (cambio o devolución).
                 Lee las condiciones completas en los
                 <NuxtLink to="/terminos#cambios" class="link-inline">Términos y condiciones</NuxtLink>.
